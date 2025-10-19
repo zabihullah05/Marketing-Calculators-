@@ -1,0 +1,1 @@
+See lib/ for code. Copy .env.example to .env and add Gemini API key. Run flutter pub get and build with flutter build appbundle --release.
