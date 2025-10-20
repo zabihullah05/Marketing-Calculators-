@@ -20,7 +20,6 @@ class _CTRCalculatorState extends State<CTRCalculator> {
     final impressions = double.tryParse(_impressions_controller.text) ?? 0.0;
     double result = 0.0;
     if (impressions != 0) result = (clicks / impressions) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('CTRCalculator', {
