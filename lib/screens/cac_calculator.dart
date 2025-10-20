@@ -19,8 +19,7 @@ class _CACCalculatorState extends State<CACCalculator> {
     final cost = double.tryParse(_cost_controller.text) ?? 0.0;
     final new_customers = double.tryParse(_new_customers_controller.text) ?? 0.0;
     double result = 0.0;
-    if (new_customers != 0) result = cost / new_customers;
-    final result = result;
+    if (new_customers != 0) result = cost / new_customers
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('CACCalculator', {
