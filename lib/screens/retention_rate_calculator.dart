@@ -21,12 +21,12 @@ class _RetentionRateCalculatorState extends State<RetentionRateCalculator> {
     final newUsers = double.tryParse(_new_controller.text) ?? 0.0;
     final starting = double.tryParse(_starting_controller.text) ?? 0.0;
     double result = 0.0;
-    if (starting != 0) result = ((end - new) / starting) * 100;
+    if (starting != 0) result = ((end - newUsers) / starting) * 100;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('RetentionRateCalculator', {
       'end': end,
-      'new': new,
+      'new': newUsers,
       'starting': starting,
       'result': result,
       'timestamp': DateTime.now().toIso8601String(),
