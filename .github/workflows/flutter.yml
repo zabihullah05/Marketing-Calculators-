@@ -1,34 +1,37 @@
-name: Flutter build (AAB)
+name: Flutter Android Build
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java (required for Android)
-        run: sudo apt-get update && sudo apt-get install -y openjdk-17-jdk
-
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3' # stable; change if you want another version
+          flutter-version: '3.22.2'   # stable modern version
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Android App Bundle (AAB)
-        run: flutter build appbundle --release --no-tree-shake-icons
+      - name: Fix old Android embedding
+        run: |
+          flutter create . --platforms=android --overwrite
 
-      - name: Upload artifact (AAB)
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
+          name: marketing_calculator_app
+          path: build/app/outputs/flutter-apk/app-release.apk
