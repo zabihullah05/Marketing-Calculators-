@@ -21,7 +21,6 @@ class _CLVCalculatorState extends State<CLVCalculator> {
     final frequency = double.tryParse(_frequency_controller.text) ?? 0.0;
     final lifespan = double.tryParse(_lifespan_controller.text) ?? 0.0;
     double result = avg * frequency * lifespan;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('CLVCalculator', {
