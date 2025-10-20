@@ -20,7 +20,6 @@ class _ROASCalculatorState extends State<ROASCalculator> {
     final ad_spend = double.tryParse(_ad_spend_controller.text) ?? 0.0;
     double result = 0.0;
     if (ad_spend != 0) result = revenue / ad_spend;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('ROASCalculator', {
