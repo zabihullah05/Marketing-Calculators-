@@ -1,44 +1,38 @@
-import 'dart:convert' as json;
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class GeminiService {
-  // Gemini API base URL
+  static const String apiKey = "AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc"; // keep your key here
+
   static const String baseUrl =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=";
 
-  // ⚠️ Replace with your actual Gemini API key
-  static const String apiKey ="AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc";
+  static Future<String> query(String prompt) async {
+    final url = Uri.parse("$baseUrl$apiKey");
 
-  static Future<String> generateContent(String prompt) async {
-    try {
-      final url = Uri.parse("$baseUrl?key=$apiKey");
+    final body = json.encode({
+      "contents": [
+        {
+          "parts": [
+            {"text": prompt}
+          ]
+        }
+      ]
+    });
 
-      final body = json.jsonEncode({
-        "contents": [
-          {
-            "parts": [
-              {"text": prompt}
-            ]
-          }
-        ]
-      });
+    final res = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
 
-      final res = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: body,
-      );
-
-      if (res.statusCode == 200) {
-        final js = json.jsonDecode(res.body);
-        final text = js["candidates"]?[0]?["content"]?["parts"]?[0]?["text"] ??
-            "No response from Gemini";
-        return text;
-      } else {
-        return "Error: ${res.statusCode} - ${res.reasonPhrase}";
-      }
-    } catch (e) {
-      return "Error: $e";
+    if (res.statusCode == 200) {
+      final data = json.decode(res.body);
+      final text =
+          data["candidates"]?[0]?["content"]?["parts"]?[0]?["text"] ?? "";
+      return text.trim();
+    } else {
+      throw Exception("Gemini API failed: ${res.statusCode}");
     }
   }
 }
