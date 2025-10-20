@@ -20,7 +20,6 @@ class _ShareOfVoiceCalculatorState extends State<ShareOfVoiceCalculator> {
     final total = double.tryParse(_total_controller.text) ?? 0.0;
     double result = 0.0;
     if (total != 0) result = (brand / total) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('ShareOfVoiceCalculator', {
