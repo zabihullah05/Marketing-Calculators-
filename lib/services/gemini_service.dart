@@ -7,7 +7,7 @@ class GeminiService {
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
   // ⚠️ Replace with your actual Gemini API key
-  static const String apiKey =AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc;
+  static const String apiKey ="AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc";
 
   static Future<String> generateContent(String prompt) async {
     try {
