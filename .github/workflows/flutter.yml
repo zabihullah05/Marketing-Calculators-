@@ -23,14 +23,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Fix old Android embedding
+      - name: Regenerate Android folder only
         run: |
           rm -rf android
-          flutter create . \
-            --org com.zabihullah.marketing_calculators \
-            --platforms=android \
-            --project-name marketing_calculators \
-            --overwrite
+          flutter create --platforms=android .
 
       - name: Build release APK
         run: flutter build apk --release
