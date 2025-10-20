@@ -25,7 +25,8 @@ jobs:
 
       - name: Fix old Android embedding
         run: |
-          flutter create . --platforms=android --overwrite
+  rm -rf android
+  flutter create . --org com.zabihullah.marketing_calculators --platforms=android --project-name marketing_calculators --overwrite
 
       - name: Build release APK
         run: flutter build apk --release
