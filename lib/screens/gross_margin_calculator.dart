@@ -20,7 +20,6 @@ class _GrossMarginCalculatorState extends State<GrossMarginCalculator> {
     final cost = double.tryParse(_cost_controller.text) ?? 0.0;
     double result = 0.0;
     if (revenue != 0) result = ((revenue - cost) / revenue) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('GrossMarginCalculator', {
