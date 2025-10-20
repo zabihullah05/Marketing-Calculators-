@@ -20,7 +20,6 @@ class _CPCCalculatorState extends State<CPCCalculator> {
     final clicks = double.tryParse(_clicks_controller.text) ?? 0.0;
     double result = 0.0;
     if (clicks != 0) result = cost / clicks;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('CPCCalculator', {
