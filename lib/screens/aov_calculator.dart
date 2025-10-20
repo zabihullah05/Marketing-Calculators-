@@ -20,7 +20,6 @@ class _AOVCalculatorState extends State<AOVCalculator> {
     final orders = double.tryParse(_orders_controller.text) ?? 0.0;
     double result = 0.0;
     if (orders != 0) result = revenue / orders;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('AOVCalculator', {
