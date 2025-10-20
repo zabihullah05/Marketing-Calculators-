@@ -20,7 +20,6 @@ class _CPLCalculatorState extends State<CPLCalculator> {
     final leads = double.tryParse(_leads_controller.text) ?? 0.0;
     double result = 0.0;
     if (leads != 0) result = cost / leads;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('CPLCalculator', {
