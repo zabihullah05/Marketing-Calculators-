@@ -20,7 +20,6 @@ class _ROICalculatorState extends State<ROICalculator> {
     final cost = double.tryParse(_cost_controller.text) ?? 0.0;
     double result = 0.0;
     if (cost != 0) result = (profit / cost) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('ROICalculator', {
