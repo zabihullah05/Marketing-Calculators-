@@ -20,7 +20,6 @@ class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
     final reach = double.tryParse(_reach_controller.text) ?? 0.0;
     double result = 0.0;
     if (reach != 0) result = (engagements / reach) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('EngagementRateCalculator', {
