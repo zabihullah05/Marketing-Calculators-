@@ -22,7 +22,6 @@ class _NPSCalculatorState extends State<NPSCalculator> {
     final total = double.tryParse(_total_controller.text) ?? 0.0;
     double result = 0.0;
     if (total != 0) result = ((promoters / total) * 100) - ((detractors / total) * 100);
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('NPSCalculator', {
