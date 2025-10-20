@@ -18,11 +18,10 @@ class _RetentionRateCalculatorState extends State<RetentionRateCalculator> {
 
   void _calculate() async {
     final end = double.tryParse(_end_controller.text) ?? 0.0;
-    final new = double.tryParse(_new_controller.text) ?? 0.0;
+    final newUsers = double.tryParse(_new_controller.text) ?? 0.0;
     final starting = double.tryParse(_starting_controller.text) ?? 0.0;
     double result = 0.0;
     if (starting != 0) result = ((end - new) / starting) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('RetentionRateCalculator', {
