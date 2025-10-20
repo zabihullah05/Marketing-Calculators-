@@ -20,7 +20,6 @@ class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
     final visitors = double.tryParse(_visitors_controller.text) ?? 0.0;
     double result = 0.0;
     if (visitors != 0) result = (conversions / visitors) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('ConversionRateCalculator', {
