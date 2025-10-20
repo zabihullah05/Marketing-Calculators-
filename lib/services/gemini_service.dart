@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class GeminiService {
   static final _base = dotenv.env['GEMINI_API_BASE_URL'] ?? 'https://api.example-gemini.com/v1';
-  static final _key = dotenv.env['GEMINI_API_KEY'] ?? '';
+  static final _key = dotenv.env['AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc'] ?? '';
 
   static Future<String> query(String prompt) async {
     if (_key.isEmpty) throw Exception('GEMINI_API_KEY not set in .env');
