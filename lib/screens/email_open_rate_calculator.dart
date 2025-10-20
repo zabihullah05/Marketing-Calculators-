@@ -20,7 +20,6 @@ class _EmailOpenRateCalculatorState extends State<EmailOpenRateCalculator> {
     final sent = double.tryParse(_sent_controller.text) ?? 0.0;
     double result = 0.0;
     if (sent != 0) result = (opens / sent) * 100;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('EmailOpenRateCalculator', {
