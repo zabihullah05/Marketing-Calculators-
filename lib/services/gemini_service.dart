@@ -1,31 +1,44 @@
-
 import 'dart:convert' as json;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class GeminiService {
-  static final _base = dotenv.env['GEMINI_API_BASE_URL'] ?? 'https://api.example-gemini.com/v1';
-  static final _key = dotenv.env['AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc'] ?? '';
+  // Gemini API base URL
+  static const String baseUrl =
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
-  static Future<String> query(String prompt) async {
-    if (_key.isEmpty) throw Exception('GEMINI_API_KEY not set in .env');
+  // ⚠️ Replace with your actual Gemini API key
+  static const String apiKey =AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc;
 
-    final url = Uri.parse('$_base/generate'); // placeholder path
-    final body = json.encode({
-      'prompt': prompt,
-      'max_tokens': 120,
-    });
+  static Future<String> generateContent(String prompt) async {
+    try {
+      final url = Uri.parse("$baseUrl?key=$apiKey");
 
-    final res = await http.post(url, headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $_key',
-    }, body: body);
+      final body = json.jsonEncode({
+        "contents": [
+          {
+            "parts": [
+              {"text": prompt}
+            ]
+          }
+        ]
+      });
 
-    if (res.statusCode == 200) {
-      final js = json.decode(res.body);
-      return js['text'] ?? js['result'] ?? 'No response body';
-    } else {
-      throw Exception('Gemini request failed with ${res.statusCode}');
+      final res = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+
+      if (res.statusCode == 200) {
+        final js = json.jsonDecode(res.body);
+        final text = js["candidates"]?[0]?["content"]?["parts"]?[0]?["text"] ??
+            "No response from Gemini";
+        return text;
+      } else {
+        return "Error: ${res.statusCode} - ${res.reasonPhrase}";
+      }
+    } catch (e) {
+      return "Error: $e";
     }
   }
 }
