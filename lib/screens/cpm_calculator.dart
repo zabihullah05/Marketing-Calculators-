@@ -20,7 +20,6 @@ class _CPMCalculatorState extends State<CPMCalculator> {
     final impressions = double.tryParse(_impressions_controller.text) ?? 0.0;
     double result = 0.0;
     if (impressions != 0) result = (cost / impressions) * 1000;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('CPMCalculator', {
