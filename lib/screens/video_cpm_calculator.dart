@@ -20,7 +20,6 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
     final views = double.tryParse(_views_controller.text) ?? 0.0;
     double result = 0.0;
     if (views != 0) result = (cost / views) * 1000;
-    final result = result;
     setState(() { _result = result; _recommendation = 'Generating...'; });
 
     await StorageService.saveCalculatorResult('VideoCPMCalculator', {
