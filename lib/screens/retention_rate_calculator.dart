@@ -29,17 +29,16 @@ class _RetentionRateCalculatorState extends State<RetentionRateCalculator> {
   }
 
   void _downloadPDF() {
-    if (_retentionRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Retention Rate Calculator',
-  {
-    'Customers End Period': endController.text,
-    'New Customers': newController.text,
-    'Start Customers': startController.text,
-    'Retention Rate': retentionRate.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_retentionRate != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Retention Rate Result",
+      {
+        "Returning Customers": _returningCustomersController.text,
+        "Total Customers": _totalCustomersController.text,
+        "Retention Rate": "${_retentionRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
