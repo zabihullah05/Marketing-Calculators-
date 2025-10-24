@@ -28,7 +28,7 @@ class _CPLCalculatorState extends State<CPLCalculator> {
 
   void _downloadPDF() {
     if (_cpl != null) {
-      pdfService.generateAndDownload(
+      PdfService.generateAndDownload(
         title: "Cost Per Lead Calculator Result",
         content: "Your CPL is \$${_cpl!.toStringAsFixed(2)}",
       );
