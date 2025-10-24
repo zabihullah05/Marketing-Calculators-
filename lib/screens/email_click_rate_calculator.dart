@@ -21,22 +21,29 @@ class _EmailClickRateCalculatorState extends State<EmailClickRateCalculator> {
       });
     } else {
       setState(() {
-        _clickRate = 0;
+        _clickRate = null;
       });
     }
   }
 
   void _downloadPDF() {
-  if (_clickRate != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Email Click Rate Result",
-      {
-        "Clicks": _clicksController.text,
-        "Emails Delivered": _deliveredController.text,
-        "Click Rate": "${_clickRate!.toStringAsFixed(2)}%",
-      },
-    );
+    if (_clickRate != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "Email Click Rate Result",
+        {
+          "Clicks": _clicksController.text,
+          "Emails Delivered": _emailsDeliveredController.text,
+          "Click Rate": "${_clickRate!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
+
+  @override
+  void dispose() {
+    _clicksController.dispose();
+    _emailsDeliveredController.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,7 +69,7 @@ class _EmailClickRateCalculatorState extends State<EmailClickRateCalculator> {
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
