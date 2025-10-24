@@ -24,7 +24,7 @@ class _CLVCalculatorState extends State<CLVCalculator> {
 
   void _downloadPDF() {
     if (_clv != null) {
-      pdfService.generateAndDownload(
+      PdfService.generateAndDownload(
         title: "CLV Calculator Result",
         content: "Customer Lifetime Value (CLV): \$${_clv!.toStringAsFixed(2)}",
       );
