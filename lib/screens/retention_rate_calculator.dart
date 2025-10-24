@@ -30,7 +30,7 @@ class _RetentionRateCalculatorState extends State<RetentionRateCalculator> {
 
   void _downloadPDF() {
     if (_retentionRate != null) {
-      PDFService.generateAndDownload(
+      pdfService.generateAndDownload(
         title: "Retention Rate Calculator Result",
         content:
             "Your Customer Retention Rate is ${_retentionRate!.toStringAsFixed(2)}%. This measures how many customers remained with your business during the period.",
