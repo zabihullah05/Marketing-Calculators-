@@ -28,7 +28,7 @@ class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
 
   void _downloadPDF() {
     if (_engagementRate != null) {
-      pdfService.generateAndDownload(
+      PdfService.generateAndDownload(
         title: "Engagement Rate Calculator Result",
         content:
             "Engagement Rate: ${_engagementRate!.toStringAsFixed(2)}%",
