@@ -27,16 +27,16 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
   }
 
   void _downloadPDF() {
-    if (_videoCPM != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Video CPM Calculator',
-  {
-    'Cost': costController.text,
-    'Video Views': viewsController.text,
-    'Video CPM': videoCpmResult.toStringAsFixed(2),
-  },
-);
-    }
+  if (_videoCpm != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Video CPM Result",
+      {
+        "Video Cost": _costController.text,
+        "Video Views": _viewsController.text,
+        "Video CPM": _videoCpm!.toStringAsFixed(2),
+      },
+    );
+  }
   }
 
   @override
