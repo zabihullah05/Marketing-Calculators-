@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class ConversionRateCalculator extends StatefulWidget {
   @override
@@ -10,73 +7,133 @@ class ConversionRateCalculator extends StatefulWidget {
 }
 
 class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
-  final _conversions_controller = TextEditingController();
-  final _visitors_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _conversionsController = TextEditingController();
+  final _totalVisitorsController = TextEditingController();
+  double? _conversionRate;
 
-  void _calculate() async {
-    final conversions = double.tryParse(_conversions_controller.text) ?? 0.0;
-    final visitors = double.tryParse(_visitors_controller.text) ?? 0.0;
-    double result = 0.0;
-    if (visitors != 0) result = (conversions / visitors) * 100;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateConversionRate() {
+    final conversions = double.tryParse(_conversionsController.text) ?? 0;
+    final totalVisitors = double.tryParse(_totalVisitorsController.text) ?? 0;
 
-    await StorageService.saveCalculatorResult('ConversionRateCalculator', {
-      'conversions': conversions,
-      'visitors': visitors,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
+    if (totalVisitors > 0) {
+      setState(() => _conversionRate = (conversions / totalVisitors) * 100);
+    } else {
+      setState(() => _conversionRate = null);
+    }
+  }
 
-    final prompt = 'I have a Conversion Rate of {{result}}%. Provide evaluation and 2 tips to improve conversions.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_conversionRate != null) {
+      PDFService.generateAndDownload(
+        title: "Conversion Rate Calculator Result",
+        content: "Conversion Rate: ${_conversionRate!.toStringAsFixed(2)}%",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ConversionRate Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("Conversion Rate Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Conversion Rate = (Conversions / Visitors) * 100.'),
-            SizedBox(height: 12),
-            TextField(controller: _conversions_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Conversions')),
-            TextField(controller: _visitors_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Visitors')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('ConversionRateCalculator', {
-                    'Conversions': _conversions_controller.text,
-                    'Visitors': _visitors_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Determine your Conversion Rate by entering the number of conversions and total visitors.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _conversionsController,
+                  decoration: InputDecoration(
+                    labelText: "Conversions",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _totalVisitorsController,
+                  decoration: InputDecoration(
+                    labelText: "Total Visitors",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateConversionRate,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate Conversion Rate"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _conversionRate == null
+                          ? "Your Conversion Rate will appear here."
+                          : "Your Conversion Rate is ${_conversionRate!.toStringAsFixed(2)}%",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
