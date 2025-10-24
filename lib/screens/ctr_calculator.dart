@@ -14,24 +14,36 @@ class _CTRCalculatorState extends State<CTRCalculator> {
   void _calculateCTR() {
     final clicks = double.tryParse(_clicksController.text) ?? 0;
     final impressions = double.tryParse(_impressionsController.text) ?? 0;
+
     if (impressions > 0) {
-      setState(() => _ctr = (clicks / impressions) * 100);
+      setState(() {
+        _ctr = (clicks / impressions) * 100;
+      });
     } else {
-      setState(() => _ctr = null);
+      setState(() {
+        _ctr = null;
+      });
     }
   }
 
   void _downloadPDF() {
-  if (_ctr != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "CTR Calculator Result",
-      {
-        "Clicks": _clicksController.text,
-        "Impressions": _impressionsController.text,
-        "CTR": "${_ctr!.toStringAsFixed(2)}%",
-      },
-    );
+    if (_ctr != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "CTR Calculator Result",
+        {
+          "Total Clicks": _clicksController.text,
+          "Total Impressions": _impressionsController.text,
+          "CTR": "${_ctr!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
+
+  @override
+  void dispose() {
+    _clicksController.dispose();
+    _impressionsController.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,7 +77,7 @@ class _CTRCalculatorState extends State<CTRCalculator> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Calculate your Click-Through Rate by entering total clicks and total impressions below.",
+                  "Calculate your Click-Through Rate by entering total clicks and impressions below.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
