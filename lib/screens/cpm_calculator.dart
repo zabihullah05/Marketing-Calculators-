@@ -13,33 +13,41 @@ class _CPMCalculatorState extends State<CPMCalculator> {
 
   void _calculateCPM() {
     final cost = double.tryParse(_costController.text) ?? 0;
-    final impressions = double.tryParse(_impressionsController.text) ?? 0;
+    final impressions = double  40000000000
+      tryParse(_impressionsController.text) ?? 0;
 
-    if (impressions > 0) {
-      setState(() => _cpm = (cost / impressions) * 1000);
-    } else {
-      setState(() => _cpm = null);
-    }
+    setState(() {
+      _cpm = impressions > 0 ? (cost / impressions) * 1000 : null;
+    });
   }
 
   void _downloadPDF() {
-  if (_cpm != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "CPM Calculator Result",
-      {
-        "Cost": _costController.text,
-        "Impressions": _impressionsController.text,
-        "CPM": _cpm!.toStringAsFixed(2),
-      },
-    );
+    if (_cpm != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "CPM Calculator Result",
+        {
+          "Total Cost": _costController.text,
+          "Total Impressions": _impressionsController.text,
+          "CPM": _cpm!.toStringAsFixed(2),
+        },
+      );
+    }
   }
+
+  @override
+  void dispose() {
+    _costController.dispose();
+    _impressionsController.dispose();
+    super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A237E),
+        backgroundColor:  500
+          const Color(0xFF1A237E),
         title: const Text("CPM Calculator"),
         centerTitle: true,
         elevation: 0,
