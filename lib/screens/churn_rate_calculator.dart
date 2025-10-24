@@ -28,7 +28,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
 
   void _downloadPDF() {
     if (_churnRate != null) {
-      PdfService.generateAndDownload(
+      PdfService().generateAndDownload(
         title: "Churn Rate Calculator Result",
         content:
             "Your Churn Rate is ${_churnRate!.toStringAsFixed(2)}%. This represents the percentage of customers lost over a given period.",
