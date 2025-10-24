@@ -16,28 +16,38 @@ class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
     final engagements = double.tryParse(_engagementsController.text) ?? 0;
     final followers = double.tryParse(_followersController.text) ?? 0;
 
-    if (followers != 0) {
-      setState(() {
+    setState(() {
+      if (followers > 0) {
         _engagementRate = (engagements / followers) * 100;
-      });
-    } else {
-      setState(() {
+      } else {
         _engagementRate = 0;
-      });
-    }
+      }
+    });
   }
 
   void _downloadPDF() {
-    if (_engagementRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-        "Engagement Rate Result",
-        {
-          "Engagements": _engagementsController.text,
-          "Followers": _followersController.text,
-          "Engagement Rate": "${_engagementRate!.toStringAsFixed(2)}%",
-        },
+    if (_engagementRate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please calculate engagement rate first.")),
       );
+      return;
     }
+
+    PdfService.generateSingleCalculatorPdf(
+      "Engagement Rate Result",
+      {
+        "Engagements": _engagementsController.text,
+        "Followers": _followersController.text,
+        "Engagement Rate": "${_engagementRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _engagementsController.dispose();
+    _followersController.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,7 +69,7 @@ class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
