@@ -7,7 +7,7 @@ class NPSCalculator extends StatefulWidget {
 }
 
 class _NPSCalculatorState extends State<NPSCalculator> {
-  final _promotersController =  TextEditingController();
+  final _promotersController = TextEditingController();
   final _detractorsController = TextEditingController();
   final _totalResponsesController = TextEditingController();
 
@@ -18,15 +18,13 @@ class _NPSCalculatorState extends State<NPSCalculator> {
     final detractors = double.tryParse(_detractorsController.text) ?? 0;
     final total = double.tryParse(_totalResponsesController.text) ?? 0;
 
-    if (total != 0) {
-      setState(() {
+    setState(() {
+      if (total > 0) {
         _npsScore = ((promoters - detractors) / total) * 100;
-      });
-    } else {
-      setState(() {
+      } else {
         _npsScore = 0;
-      });
-    }
+      }
+    });
   }
 
   void _downloadPDF() {
@@ -54,7 +52,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors. grey[100],
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("NPS Calculator"),
@@ -68,9 +66,9 @@ class _NPSCalculatorState extends State<NPSCalculator> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors. white,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
@@ -83,7 +81,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
               children: [
                 const Text(
                   "Calculate your Net Promoter Score (NPS) to measure customer satisfaction and loyalty.",
-                  textAlign: TextAlign. center,
+                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
@@ -95,7 +93,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType. number,
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -106,7 +104,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType. number,
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -117,7 +115,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType. number,
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -135,7 +133,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors. grey[100],
+                    color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
@@ -145,7 +143,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
                           : "Your NPS is ${_npsScore!.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight. w500,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -155,7 +153,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    backgroundColor: Colors. indigoAccent,
+                    backgroundColor: Colors.indigoAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
