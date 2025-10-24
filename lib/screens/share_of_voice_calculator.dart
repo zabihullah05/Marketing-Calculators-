@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class ShareOfVoiceCalculator extends StatefulWidget {
   @override
@@ -10,73 +7,138 @@ class ShareOfVoiceCalculator extends StatefulWidget {
 }
 
 class _ShareOfVoiceCalculatorState extends State<ShareOfVoiceCalculator> {
-  final _brand_controller = TextEditingController();
-  final _total_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _brandSpendController = TextEditingController();
+  final _totalMarketSpendController = TextEditingController();
+  double? _sov;
 
-  void _calculate() async {
-    final brand = double.tryParse(_brand_controller.text) ?? 0.0;
-    final total = double.tryParse(_total_controller.text) ?? 0.0;
-    double result = 0.0;
-    if (total != 0) result = (brand / total) * 100;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateSOV() {
+    final brandSpend = double.tryParse(_brandSpendController.text) ?? 0;
+    final totalSpend = double.tryParse(_totalMarketSpendController.text) ?? 0;
 
-    await StorageService.saveCalculatorResult('ShareOfVoiceCalculator', {
-      'brand': brand,
-      'total': total,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
+    if (totalSpend != 0) {
+      setState(() {
+        _sov = (brandSpend / totalSpend) * 100;
+      });
+    } else {
+      setState(() {
+        _sov = 0;
+      });
+    }
+  }
 
-    final prompt = 'I have a Share of Voice of {{result}}%. Provide evaluation and 2 tips to grow SOV.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_sov != null) {
+      PDFService.generateAndDownload(
+        title: "Share of Voice (SOV) Calculator Result",
+        content:
+            "Your brand’s Share of Voice (SOV) is ${_sov!.toStringAsFixed(2)}%.\n\nSOV helps you measure your brand’s advertising presence relative to competitors in the market.",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ShareOfVoice Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("Share of Voice Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Share of Voice = (Brand Mentions / Total Mentions) * 100.'),
-            SizedBox(height: 12),
-            TextField(controller: _brand_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Brand Mentions')),
-            TextField(controller: _total_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Total Mentions')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('ShareOfVoiceCalculator', {
-                    'Brand Mentions': _brand_controller.text,
-                    'Total Mentions': _total_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Calculate your brand’s Share of Voice (SOV) — your advertising share compared to competitors in the market.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _brandSpendController,
+                  decoration: InputDecoration(
+                    labelText: "Your Brand’s Advertising Spend (\$)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _totalMarketSpendController,
+                  decoration: InputDecoration(
+                    labelText: "Total Market Advertising Spend (\$)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateSOV,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate Share of Voice"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _sov == null
+                          ? "Your Share of Voice result will appear here."
+                          : "Your Share of Voice is ${_sov!.toStringAsFixed(2)}%",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
