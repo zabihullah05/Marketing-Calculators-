@@ -15,7 +15,7 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
     final cost = double.tryParse(_costController.text) ?? 0;
     final views = double.tryParse(_viewsController.text) ?? 0;
 
-    if (views != 0) {
+    if (views > 0) {
       setState(() {
         _videoCPM = (cost / views) * 1000;
       });
@@ -27,25 +27,26 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
   }
 
   void _downloadPDF() {
-  if (_videoCpm != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Video CPM Result",
-      {
-        "Video Cost": _costController.text,
-        "Video Views": _viewsController.text,
-        "Video CPM": _videoCpm!.toStringAsFixed(2),
-      },
-    );
-  }
+    if (_videoCPM != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "Video CPM Result",
+        {
+          "Total Campaign Cost": _costController.text,
+          "Total Video Views": _viewsController.text,
+          "Video CPM": _videoCPM!.toStringAsFixed(2),
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      1A237E
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
-        title: const Text("Video CPM Calculator"),
+        title: const Text  ("Video CPM Calculator"),
         centerTitle: true,
         elevation: 0,
       ),
@@ -62,7 +63,7 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
-                  offset: Offset(0, 4),
+ 0, 4),
                 ),
               ],
             ),
@@ -70,7 +71,7 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Calculate the cost per 1,000 video impressions (Video CPM) for your video ad campaigns.",
+                  "Calculate the cost per 1,000 video impressions (Video CPM) for  your  video ad campaigns.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
@@ -78,12 +79,11 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
                 TextField(
                   controller: _costController,
                   decoration: InputDecoration(
-                    labelText: "Total Campaign Cost (\$)",
+  Total Campaign Cost (\$)",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  keyboardType: TextInputType.number,
+                  )),                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -98,9 +98,7 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: _calculateVideoCPM,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  onPressed: _  4),
                     backgroundColor: const Color(0xFF1A237E),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
