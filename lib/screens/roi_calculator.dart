@@ -14,24 +14,29 @@ class _ROICalculatorState extends State<ROICalculator> {
   void _calculateROI() {
     final gain = double.tryParse(_gainController.text) ?? 0;
     final cost = double.tryParse(_costController.text) ?? 0;
+
     if (cost > 0) {
-      setState(() => _roi = ((gain - cost) / cost) * 100);
+      setState(() {
+        _roi = ((gain - cost) / cost) * 100;
+      });
     } else {
-      setState(() => _roi = null);
+      setState(() {
+        _roi = null;
+      });
     }
   }
 
   void _downloadPDF() {
-  if (_roi != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "ROI Calculator Result",
-      {
-        "Investment": _investmentController.text,
-        "Return": _returnController.text,
-        "ROI": "${_roi!.toStringAsFixed(2)}%",
-      },
-    );
-  }
+    if (_roi != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "ROI Calculator Result",
+        {
+          "Total Gain": _gainController.text,
+          "Total Cost": _costController.text,
+          "ROI": "${_roi!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
 
   @override
