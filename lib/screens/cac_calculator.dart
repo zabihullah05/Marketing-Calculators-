@@ -28,7 +28,7 @@ class _CACCalculatorState extends State<CACCalculator> {
 
   void _downloadPDF() {
     if (_cac != null) {
-      PDFService.generateAndDownload(
+      pdfService.generateAndDownload(
         title: "CAC Calculator Result",
         content:
             "Customer Acquisition Cost (CAC): \$${_cac!.toStringAsFixed(2)}",
