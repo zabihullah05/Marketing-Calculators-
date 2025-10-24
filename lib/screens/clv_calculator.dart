@@ -154,4 +154,12 @@ class _CLVCalculatorState extends State<CLVCalculator> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _avgPurchaseValueController.dispose();
+    _purchaseFrequencyController.dispose();
+    _customerLifespanController.dispose();
+    super.dispose();
+  }
 }
