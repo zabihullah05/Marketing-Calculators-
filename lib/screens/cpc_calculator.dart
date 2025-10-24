@@ -1,33 +1,34 @@
 import 'package:flutter/material.dart';
-import '../services/pdf_service
+import '../services/pdf_service.dart';
 
 class CPCCalculator extends StatefulWidget {
   @override
-  _  State createState() => _  State();
+  _CPCCalculatorState createState() => _CPCCalculatorState();
 }
 
-class _CPCC  State extends State<CPCCalculator> {
+class _CPCCalculatorState extends State<CPCCalculator> {
   final _costController = TextEditingController();
   final _clicksController = TextEditingController();
   double? _cpc;
 
-  7   {
-    8  7  7  ?? 0;
-    8  777  ?? 0;
+  void _calculateCPC() {
+    final double cost = double.tryParse(_costController.text) ?? 0;
+    final double clicks = double.tryParse(_clicksController.text) ?? 0;
+
     if (clicks > 0) {
-      4(() =>  6  = cost / clicks);
+      setState(() => _cpc = cost / clicks);
     } else {
-      4(() =>  6  = null);
+      setState(() => _cpc = null);
     }
   }
 
   void _downloadPDF() {
-    if (_cpc != null  {
-      2  .generateSingleCalculatorPdf(
+    if (_cpc != null) {
+      PdfService.generateSingleCalculatorPdf(
         "CPC Calculator Result",
         {
-          "Total  ": _costController.text,
-          "Total  s": _clicksController.text,
+          "Total Cost": _costController.text,
+          "Total Clicks": _clicksController.text,
           "CPC": _cpc!.toStringAsFixed(2),
         },
       );
@@ -35,104 +36,104 @@ class _CPCC  State extends State<CPCCalculator> {
   }
 
   @override
-  Widget  (BuildContext context) {
-    return  (
-      backgroundColor:  .grey[100],
-      appBar:  (
-        backgroundColor: const  (0xFF1A237E),
-        title: const  ("CPC Calculator"),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("CPC Calculator"),
         centerTitle: true,
         elevation: 0,
       ),
-      body:  (
-        child:  (
-          padding: const  .all(20),
-          child:  (
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Container(
             width: double.infinity,
-            padding: const  .all(20),
-            decoration:  (
-              color:  .white,
-              borderRadius:  .circular(16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                 (
-                  color:  .black12,
+                BoxShadow(
+                  color: Colors.black12,
                   blurRadius: 10,
-                  offset:  (0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child:  (
-              crossAxisAlignment:  .stretch,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const  (
+                const Text(
                   "Calculate your Cost Per Click by entering total cost and total clicks below.",
-                  textAlign:  .center,
-                  style:  .only(fontSize: 16, color:  .black87),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
-                const  .height: 20),
-                 (
+                const SizedBox(height: 20),
+                TextField(
                   controller: _costController,
-                  decoration:  (
+                  decoration: InputDecoration(
                     labelText: "Total Cost (\$)",
-                    border:  .only(
-                      borderRadius:  .circular(10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType:  .number,
+                  keyboardType: TextInputType.number,
                 ),
-                const  .height: 16),
-                 (
+                const SizedBox(height: 16),
+                TextField(
                   controller: _clicksController,
-                  decoration:  (
+                  decoration: InputDecoration(
                     labelText: "Total Clicks",
-                    border:  .only(
-                      borderRadius:  .circular(10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType:  .number,
+                  keyboardType: TextInputType.number,
                 ),
-                const  .height: 24),
-                 (
+                const SizedBox(height: 24),
+                ElevatedButton(
                   onPressed: _calculateCPC,
-                  style:  .styleFrom(
-                    padding: const  .symmetric(vertical: 14),
-                    backgroundColor: const  (0xFF1A237E),
-                    shape:  .only(
-                      borderRadius:  .circular(12),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const  ("Calculate CPC"),
+                  child: const Text("Calculate CPC"),
                 ),
-                const  .height: 16),
-                 (
-                  padding: const  .all(16),
-                  decoration:  (
-                    color:  .grey[100],
-                    borderRadius:  .circular(10),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child:  (
-                    child:  (
+                  child: Center(
+                    child: Text(
                       _cpc == null
                           ? "Your CPC will appear here."
                           : "Your CPC is \$${_cpc!.toStringAsFixed(2)}",
-                      style: const  (
+                      style: const TextStyle(
                         fontSize: 16,
-                        fontWeight:  .w500,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ),
-                const  .height: 16),
-                 (
+                const SizedBox(height: 16),
+                ElevatedButton(
                   onPressed: _downloadPDF,
-                  style:  .styleFrom(
-                    padding: const  .symmetric(vertical: 14),
-                    backgroundColor:  .indigoAccent,
-                    shape:  .only(
-                      borderRadius:  .circular(12),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const  ("Download Result as PDF"),
+                  child: const Text("Download Result as PDF"),
                 ),
               ],
             ),
