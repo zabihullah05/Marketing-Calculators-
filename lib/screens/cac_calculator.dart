@@ -28,11 +28,14 @@ class _CACCalculatorState extends State<CACCalculator> {
 
   void _downloadPDF() {
     if (_cac != null) {
-      PdfService().generateAndDownload(
-        title: "CAC Calculator Result",
-        content:
-            "Customer Acquisition Cost (CAC): \$${_cac!.toStringAsFixed(2)}",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'CAC Calculator',
+  {
+    'Total Marketing Spend': totalCostController.text,
+    'New Customers': customersController.text,
+    'CAC': cacResult.toStringAsFixed(2),
+  },
+);
     }
   }
 
