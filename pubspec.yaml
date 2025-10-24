@@ -5,18 +5,18 @@ publish_to: 'none'
 version: 0.1.0+1
 
 environment:
-  sdk: ">=2.18.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  http: ^0.13.5
-  flutter_dotenv: ^5.0.2
+  http: ^1.2.0
+  flutter_dotenv: ^5.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  path_provider: ^2.0.11
+  path_provider: ^2.1.0
   pdf: ^3.10.1
   printing: ^5.10.0
 
