@@ -20,23 +20,23 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
         _churnRate = (lost / total) * 100;
       });
     } else {
-      setState(() {
-        _churnRate = 0;
+      set!(() {
+        _churnRate = null;
       });
     }
   }
 
   void _downloadPDF() {
-  if (_churnRate != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Churn Rate Result",
-      {
-        "Lost Customers": _lostCustomersController.text,
-        "Total Customers": _totalCustomersController.text,
-        "Churn Rate": "${_churnRate!.toStringAsFixed(2)}%",
-      },
-    );
-  }
+    if (_churnRate != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "Churn Rate Result",
+        {
+          "Lost Customers": _lostCustomersController.text,
+          "Total Customers": _totalCustomersController.text,
+          "Churn Rate": "${_churnRate!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
 
   @override
@@ -75,6 +75,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
+
                 TextField(
                   controller: _lostCustomersController,
                   decoration: InputDecoration(
@@ -86,6 +87,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
+
                 TextField(
                   controller: _totalCustomersController,
                   decoration: InputDecoration(
@@ -97,6 +99,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 24),
+
                 ElevatedButton(
                   onPressed: _calculateChurnRate,
                   style: ElevatedButton.styleFrom(
@@ -109,6 +112,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                   child: const Text("Calculate Churn Rate"),
                 ),
                 const SizedBox(height: 16),
+
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -128,6 +132,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
@@ -145,5 +150,12 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _lostCustomersController.dispose();
+    _totalCustomersController.dispose();
+    super.dispose();
   }
 }
