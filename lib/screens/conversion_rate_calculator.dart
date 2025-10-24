@@ -23,16 +23,16 @@ class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
   }
 
   void _downloadPDF() {
-    if (_conversionRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Conversion Rate Calculator',
-  {
-    'Conversions': conversionsController.text,
-    'Visitors': visitorsController.text,
-    'Conversion Rate': conversionRate.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_conversionRate != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Conversion Rate Result",
+      {
+        "Conversions": _conversionsController.text,
+        "Visitors": _visitorsController.text,
+        "Conversion Rate": "${_conversionRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
