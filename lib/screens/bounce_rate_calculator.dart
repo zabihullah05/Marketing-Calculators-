@@ -24,7 +24,7 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
 
   void _downloadPDF() {
     if (_bounceRate != null) {
-      pdfService.generateAndDownload(
+      PdfService.generateAndDownload(
         title: "Bounce Rate Calculator Result",
         content: "Bounce Rate: ${_bounceRate!.toStringAsFixed(2)}%",
       );
