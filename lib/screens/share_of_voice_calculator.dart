@@ -28,11 +28,14 @@ class _ShareOfVoiceCalculatorState extends State<ShareOfVoiceCalculator> {
 
   void _downloadPDF() {
     if (_sov != null) {
-      PdfService().generateAndDownload(
-        title: "Share of Voice (SOV) Calculator Result",
-        content:
-            "Your brand’s Share of Voice (SOV) is ${_sov!.toStringAsFixed(2)}%.\n\nSOV helps you measure your brand’s advertising presence relative to competitors in the market.",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'Share of Voice Calculator',
+  {
+    'Your Mentions': yourMentionsController.text,
+    'Total Industry Mentions': totalMentionsController.text,
+    'Share of Voice': sovResult.toStringAsFixed(2) + '%',
+  },
+);
     }
   }
 
