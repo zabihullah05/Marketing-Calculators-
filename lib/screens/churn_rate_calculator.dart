@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class ChurnRateCalculator extends StatefulWidget {
   @override
@@ -10,73 +7,138 @@ class ChurnRateCalculator extends StatefulWidget {
 }
 
 class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
-  final _lost_controller = TextEditingController();
-  final _starting_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _lostCustomersController = TextEditingController();
+  final _totalCustomersController = TextEditingController();
+  double? _churnRate;
 
-  void _calculate() async {
-    final lost = double.tryParse(_lost_controller.text) ?? 0.0;
-    final starting = double.tryParse(_starting_controller.text) ?? 0.0;
-    double result = 0.0;
-    if (starting != 0) result = (lost / starting) * 100;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateChurnRate() {
+    final lost = double.tryParse(_lostCustomersController.text) ?? 0;
+    final total = double.tryParse(_totalCustomersController.text) ?? 0;
 
-    await StorageService.saveCalculatorResult('ChurnRateCalculator', {
-      'lost': lost,
-      'starting': starting,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
+    if (total != 0) {
+      setState(() {
+        _churnRate = (lost / total) * 100;
+      });
+    } else {
+      setState(() {
+        _churnRate = 0;
+      });
+    }
+  }
 
-    final prompt = 'I have a Churn Rate of {{result}}%. Provide evaluation and 2 tips to reduce churn.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_churnRate != null) {
+      PDFService.generateAndDownload(
+        title: "Churn Rate Calculator Result",
+        content:
+            "Your Churn Rate is ${_churnRate!.toStringAsFixed(2)}%. This represents the percentage of customers lost over a given period.",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ChurnRate Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("Churn Rate Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Churn Rate = (Lost Customers / Starting Customers) * 100.'),
-            SizedBox(height: 12),
-            TextField(controller: _lost_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Lost Customers')),
-            TextField(controller: _starting_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Starting Customers')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('ChurnRateCalculator', {
-                    'Lost Customers': _lost_controller.text,
-                    'Starting Customers': _starting_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Calculate how many customers you lost over a specific period relative to the total number of customers you had.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _lostCustomersController,
+                  decoration: InputDecoration(
+                    labelText: "Number of Customers Lost",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _totalCustomersController,
+                  decoration: InputDecoration(
+                    labelText: "Total Customers at Start of Period",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateChurnRate,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate Churn Rate"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _churnRate == null
+                          ? "Your churn rate result will appear here."
+                          : "Your Churn Rate is ${_churnRate!.toStringAsFixed(2)}%",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
