@@ -2,37 +2,34 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class GeminiService {
-  static const String apiKey = "AIzaSyBWFfDBzBSvWHfwDpc2yaqyehySHrWksOc"; // keep your key here
-
-  static const String baseUrl =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=";
+  static const String apiKey = String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
+  static const String baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
   static Future<String> query(String prompt) async {
-    final url = Uri.parse("$baseUrl$apiKey");
+    if (apiKey.isEmpty) {
+      return "API key not found. Please add your Gemini API key.";
+    }
 
-    final body = json.encode({
-      "contents": [
-        {
-          "parts": [
-            {"text": prompt}
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl?key=$apiKey'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "contents": [
+            {"parts": [{"text": prompt}]}
           ]
-        }
-      ]
-    });
+        }),
+      );
 
-    final res = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
-
-    if (res.statusCode == 200) {
-      final data = json.decode(res.body);
-      final text =
-          data["candidates"]?[0]?["content"]?["parts"]?[0]?["text"] ?? "";
-      return text.trim();
-    } else {
-      throw Exception("Gemini API failed: ${res.statusCode}");
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['candidates'][0]['content']['parts'][0]['text'] ??
+            "No response received from Gemini AI.";
+      } else {
+        return "Gemini API error: ${response.statusCode} ${response.reasonPhrase}";
+      }
+    } catch (e) {
+      return "Error contacting Gemini API: $e";
     }
   }
 }
