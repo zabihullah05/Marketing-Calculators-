@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class CLVCalculator extends StatefulWidget {
   @override
@@ -10,77 +7,144 @@ class CLVCalculator extends StatefulWidget {
 }
 
 class _CLVCalculatorState extends State<CLVCalculator> {
-  final _avg_controller = TextEditingController();
-  final _frequency_controller = TextEditingController();
-  final _lifespan_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _avgPurchaseValueController = TextEditingController();
+  final _purchaseFrequencyController = TextEditingController();
+  final _customerLifespanController = TextEditingController();
+  double? _clv;
 
-  void _calculate() async {
-    final avg = double.tryParse(_avg_controller.text) ?? 0.0;
-    final frequency = double.tryParse(_frequency_controller.text) ?? 0.0;
-    final lifespan = double.tryParse(_lifespan_controller.text) ?? 0.0;
-    double result = avg * frequency * lifespan;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateCLV() {
+    final avgPurchase = double.tryParse(_avgPurchaseValueController.text) ?? 0;
+    final frequency = double.tryParse(_purchaseFrequencyController.text) ?? 0;
+    final lifespan = double.tryParse(_customerLifespanController.text) ?? 0;
 
-    await StorageService.saveCalculatorResult('CLVCalculator', {
-      'avg': avg,
-      'frequency': frequency,
-      'lifespan': lifespan,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
+    setState(() {
+      _clv = avgPurchase * frequency * lifespan;
     });
+  }
 
-    final prompt = 'I have a CLV of ${{result}}. Provide evaluation and 2 tips to increase CLV.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_clv != null) {
+      PDFService.generateAndDownload(
+        title: "CLV Calculator Result",
+        content: "Customer Lifetime Value (CLV): \$${_clv!.toStringAsFixed(2)}",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CLV Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("CLV Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Customer Lifetime Value = Avg Purchase Value * Purchase Frequency * Customer Lifespan.'),
-            SizedBox(height: 12),
-            TextField(controller: _avg_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Avg Purchase Value')),
-            TextField(controller: _frequency_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Purchase Frequency')),
-            TextField(controller: _lifespan_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Customer Lifespan (years)')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('CLVCalculator', {
-                    'Avg Purchase Value': _avg_controller.text,
-                    'Purchase Frequency': _frequency_controller.text,
-                    'Customer Lifespan (years)': _lifespan_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Calculate the lifetime value of a customer by entering average purchase value, purchase frequency, and lifespan.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _avgPurchaseValueController,
+                  decoration: InputDecoration(
+                    labelText: "Average Purchase Value (\$)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _purchaseFrequencyController,
+                  decoration: InputDecoration(
+                    labelText: "Purchase Frequency (per year)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _customerLifespanController,
+                  decoration: InputDecoration(
+                    labelText: "Customer Lifespan (years)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateCLV,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate CLV"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _clv == null
+                          ? "Your CLV result will appear here."
+                          : "Your Customer Lifetime Value is \$${_clv!.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
