@@ -43,10 +43,9 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      1A237E
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
-        title: const Text  ("Video CPM Calculator"),
+        title: const Text("Video CPM Calculator"),
         centerTitle: true,
         elevation: 0,
       ),
@@ -63,7 +62,7 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
- 0, 4),
+                  offset: Offset(0, 4),
                 ),
               ],
             ),
@@ -71,7 +70,7 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Calculate the cost per 1,000 video impressions (Video CPM) for  your  video ad campaigns.",
+                  "Calculate the cost per 1,000 video impressions (Video CPM) for your video ad campaigns.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
@@ -79,11 +78,12 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
                 TextField(
                   controller: _costController,
                   decoration: InputDecoration(
-  Total Campaign Cost (\$)",
+                    labelText: "Total Campaign Cost (\$)",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                  )),                  keyboardType: TextInputType.number,
+                  ),
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -98,7 +98,9 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: _  4),
+                  onPressed: _calculateVideoCPM,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     backgroundColor: const Color(0xFF1A237E),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
