@@ -28,7 +28,7 @@ class _GrossMarginCalculatorState extends State<GrossMarginCalculator> {
 
   void _downloadPDF() {
     if (_grossMargin != null) {
-      PdfService.generateAndDownload(
+      PdfService().generateAndDownload(
         title: "Gross Margin Calculator Result",
         content:
             "Gross Margin: ${_grossMargin!.toStringAsFixed(2)}%",
