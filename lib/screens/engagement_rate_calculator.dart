@@ -27,16 +27,16 @@ class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
   }
 
   void _downloadPDF() {
-    if (_engagementRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Engagement Rate Calculator',
-  {
-    'Engagements': engagementsController.text,
-    'Followers': followersController.text,
-    'Engagement Rate': engagementRate.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_engagementRate != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Engagement Rate Result",
+      {
+        "Engagements": _engagementsController.text,
+        "Followers": _followersController.text,
+        "Engagement Rate": "${_engagementRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
