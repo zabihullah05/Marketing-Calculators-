@@ -28,7 +28,7 @@ class _EmailClickRateCalculatorState extends State<EmailClickRateCalculator> {
 
   void _downloadPDF() {
     if (_clickRate != null) {
-      pdfService.generateAndDownload(
+      PdfService.generateAndDownload(
         title: "Email Click Rate Calculator Result",
         content: "Email Click Rate: ${_clickRate!.toStringAsFixed(2)}%",
       );
