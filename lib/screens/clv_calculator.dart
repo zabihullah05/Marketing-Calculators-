@@ -24,10 +24,15 @@ class _CLVCalculatorState extends State<CLVCalculator> {
 
   void _downloadPDF() {
     if (_clv != null) {
-      PdfService().generateAndDownload(
-        title: "CLV Calculator Result",
-        content: "Customer Lifetime Value (CLV): \$${_clv!.toStringAsFixed(2)}",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'CLV Calculator',
+  {
+    'Average Purchase Value': avgPurchaseValueController.text,
+    'Purchase Frequency': purchaseFrequencyController.text,
+    'Customer Lifespan': customerLifespanController.text,
+    'CLV': clvResult.toStringAsFixed(2),
+  },
+);
     }
   }
 
