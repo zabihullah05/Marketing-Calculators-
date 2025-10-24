@@ -27,18 +27,17 @@ class _ShareOfVoiceCalculatorState extends State<ShareOfVoiceCalculator> {
   }
 
   void _downloadPDF() {
-    if (_sov != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Share of Voice Calculator',
-  {
-    'Your Mentions': yourMentionsController.text,
-    'Total Industry Mentions': totalMentionsController.text,
-    'Share of Voice': sovResult.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_sov != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Share of Voice Result",
+      {
+        "Brand Mentions": _brandMentionsController.text,
+        "Total Mentions": _totalMentionsController.text,
+        "SOV": "${_sov!.toStringAsFixed(2)}%",
+      },
+    );
   }
-
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
