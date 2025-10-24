@@ -28,7 +28,7 @@ class _ROASCalculatorState extends State<ROASCalculator> {
 
   void _downloadPDF() {
     if (_roas != null) {
-      pdfService.generateAndDownload(
+      PdfService.generateAndDownload(
         title: "ROAS Calculator Result",
         content:
             "Return On Ad Spend (ROAS): ${_roas!.toStringAsFixed(2)}x",
