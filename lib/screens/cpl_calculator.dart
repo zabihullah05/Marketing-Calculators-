@@ -15,42 +15,48 @@ class _CPLCalculatorState extends State<CPLCalculator> {
     final totalCost = double.tryParse(_totalCostController.text) ?? 0;
     final totalLeads = double.tryParse(_totalLeadsController.text) ?? 0;
 
-    if (totalLeads != 0) {
-      setState(() {
-        _cpl = totalCost / totalLeads;
-      });
-    } else {
-      setState(() {
-        _cpl = 0;
-      });
-    }
+    setState(() {
+      _cpl = totalLeads != 0 ? totalCost / totalLeads : 0;
+    });
   }
 
   void _downloadPDF() {
-  if (_cpl != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "CPL Calculator Result",
-      {
-        "Spend": _spendController.text,
-        "Leads": _leadsController.text,
-        "CPL": _cpl!.toStringAsFixed(2),
-      },
-    );
+    if (_cpl != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "CPL Calculator Result",
+        {
+          "Total Marketing Cost": _totalCostController.text,
+          "Total Leads Generated": _totalLeadsController.text,
+          "CPL": _cpl!.toStringAsFixed(2),
+        },
+      );
+    }
   }
+
+  @override
+  void dispose() {
+    _totalCostController.dispose();
+    _totalLeadsController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
+      background
+      Color: Colors.grey[100],
+      app
+      Bar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("Cost Per Lead Calculator"),
         centerTitle: true,
         elevation: 0,
       ),
       body: Center(
-        child: SingleChildScrollView(
+        child: Single
+        Child
+        Scroll
+        View(
           padding: const EdgeInsets.all(20),
           child: Container(
             width: double.infinity,
@@ -119,7 +125,9 @@ class _CPLCalculatorState extends State<CPLCalculator> {
                     child: Text(
                       _cpl == null
                           ? "Your CPL result will appear here."
-                          : "Your Cost Per Lead (CPL) is \$${_cpl!.toStringAsFixed(2)}",
+                          : "Your Cost
+                          Per
+                          Lead (CPL) is \$${_cpl!.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
