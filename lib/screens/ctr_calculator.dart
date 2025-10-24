@@ -23,10 +23,14 @@ class _CTRCalculatorState extends State<CTRCalculator> {
 
   void _downloadPDF() {
     if (_ctr != null) {
-      PdfService().generateAndDownload(
-        title: "CTR Calculator Result",
-        content: "Click Through Rate: ${_ctr!.toStringAsFixed(2)}%",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'CTR Calculator',
+  {
+    'Clicks': clicksController.text,
+    'Impressions': impressionsController.text,
+    'CTR': ctrResult.toStringAsFixed(2) + '%',
+  },
+);
     }
   }
 
