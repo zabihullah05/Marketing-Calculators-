@@ -27,16 +27,16 @@ class _EmailOpenRateCalculatorState extends State<EmailOpenRateCalculator> {
   }
 
   void _downloadPDF() {
-    if (_openRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Email Open Rate Calculator',
-  {
-    'Emails Opened': openedController.text,
-    'Emails Sent': sentController.text,
-    'Open Rate': openRate.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_openRate != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Email Open Rate Result",
+      {
+        "Emails Opened": _openedController.text,
+        "Emails Sent": _sentController.text,
+        "Open Rate": "${_openRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
