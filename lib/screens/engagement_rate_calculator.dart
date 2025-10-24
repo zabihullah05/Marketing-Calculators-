@@ -3,7 +3,8 @@ import '../services/pdf_service.dart';
 
 class EngagementRateCalculator extends StatefulWidget {
   @override
-  _EngagementRateCalculatorState createState() => _EngagementRateCalculatorState();
+  _EngagementRateCalculatorState createState() =>
+      _EngagementRateCalculatorState();
 }
 
 class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
@@ -27,16 +28,16 @@ class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
   }
 
   void _downloadPDF() {
-  if (_engagementRate != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Engagement Rate Result",
-      {
-        "Engagements": _engagementsController.text,
-        "Followers": _followersController.text,
-        "Engagement Rate": "${_engagementRate!.toStringAsFixed(2)}%",
-      },
-    );
-  }
+    if (_engagementRate != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "Engagement Rate Result",
+        {
+          "Engagements": _engagementsController.text,
+          "Followers": _followersController.text,
+          "Engagement Rate": "${_engagementRate!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
 
   @override
