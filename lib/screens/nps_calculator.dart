@@ -29,17 +29,17 @@ class _NPSCalculatorState extends State<NPSCalculator> {
   }
 
   void _downloadPDF() {
-    if (_npsScore != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'NPS Calculator',
-  {
-    'Promoters': promotersController.text,
-    'Detractors': detractorsController.text,
-    'Total Respondents': totalRespondentsController.text,
-    'NPS': npsScore.toStringAsFixed(0),
-  },
-);
-    }
+  if (_nps != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "NPS Calculator Result",
+      {
+        "Promoters": _promotersController.text,
+        "Detractors": _detractorsController.text,
+        "Total Respondents": _totalRespondentsController.text,
+        "NPS": _nps!.toStringAsFixed(2),
+      },
+    );
+  }
   }
 
   @override
