@@ -24,7 +24,7 @@ class _CPMCalculatorState extends State<CPMCalculator> {
 
   void _downloadPDF() {
     if (_cpm != null) {
-      PdfService.generateAndDownload(
+      PdfService().generateAndDownload(
         title: "CPM Calculator Result",
         content: "Cost per Mille (CPM): \$${_cpm!.toStringAsFixed(2)}",
       );
