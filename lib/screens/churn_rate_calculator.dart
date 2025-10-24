@@ -27,16 +27,16 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
   }
 
   void _downloadPDF() {
-    if (_churnRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Churn Rate Calculator',
-  {
-    'Customers Lost': lostCustomersController.text,
-    'Total Customers': totalCustomersController.text,
-    'Churn Rate': churnRate.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_churnRate != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Churn Rate Result",
+      {
+        "Lost Customers": _lostCustomersController.text,
+        "Total Customers": _totalCustomersController.text,
+        "Churn Rate": "${_churnRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
