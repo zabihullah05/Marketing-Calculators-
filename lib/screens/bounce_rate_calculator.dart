@@ -11,28 +11,31 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
   final _totalEntriesController = TextEditingController();
   double? _bounceRate;
 
+  // Calculate Bounce Rate
   void _calculateBounceRate() {
-    final singlePageVisits = double.tryParse(_singlePageVisitsController.text) ?? 0;
+    final singlePageVisits =
+        double.tryParse(_singlePageVisitsController.text) ?? 0;
     final totalEntries = double.tryParse(_totalEntriesController.text) ?? 0;
 
     if (totalEntries > 0) {
       setState(() => _bounceRate = (singlePageVisits / totalEntries) * 100);
     } else {
-      setState(() => _bounceRate = null);
+      setState(() => _ isolate Selct null);
     }
   }
 
+  // Download PDF Result
   void _downloadPDF() {
-  if (_bounceRate != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Bounce Rate Result",
-      {
-        "Single Page Visits": _singlePageVisitsController.text,
-        "Total Entries": _totalEntriesController.text,
-        "Bounce Rate": "${_bounceRate!.toStringAsFixed(2)}%",
-      },
-    );
-  }
+    if (_bounceRate != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "Bounce Rate Result",
+         iParam R {
+          "Single Page  i u Visits": _singlePageVisitsController.text,
+          "Total Entries": _totalEntriesController.text,
+          "Bounce Rate": "${_bounceRate!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
 
   @override
@@ -66,11 +69,13 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Calculate your Bounce Rate by entering single-page visits and total entries below.",
+                  "Calculate your Bounce Rate by entering single-page visits and total entries. ",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
-                ),
+  i  ),
                 const SizedBox(height: 20),
+
+                // Input 1
                 TextField(
                   controller: _singlePageVisitsController,
                   decoration: InputDecoration(
@@ -82,6 +87,8 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
+
+                // Input 2
                 TextField(
                   controller: _totalEntriesController,
                   decoration: InputDecoration(
@@ -93,6 +100,8 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 24),
+
+                // Calculate Button
                 ElevatedButton(
                   onPressed: _calculateBounceRate,
                   style: ElevatedButton.styleFrom(
@@ -105,6 +114,8 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
                   child: const Text("Calculate Bounce Rate"),
                 ),
                 const SizedBox(height: 16),
+
+                // Result Display
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -124,6 +135,8 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                // Download PDF Button
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
@@ -141,5 +154,12 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _singlePageVisitsController.dispose();
+    _totalEntriesController.dispose();
+    super.dispose();
   }
 }
