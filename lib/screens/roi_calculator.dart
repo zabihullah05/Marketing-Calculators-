@@ -23,7 +23,7 @@ class _ROICalculatorState extends State<ROICalculator> {
 
   void _downloadPDF() {
     if (_roi != null) {
-      PdfService.generateAndDownload(
+      PdfService().generateAndDownload(
         title: "ROI Calculator Result",
         content: "Return on Investment: ${_roi!.toStringAsFixed(2)}%",
       );
