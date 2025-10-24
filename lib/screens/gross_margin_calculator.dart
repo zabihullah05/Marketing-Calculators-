@@ -28,11 +28,14 @@ class _GrossMarginCalculatorState extends State<GrossMarginCalculator> {
 
   void _downloadPDF() {
     if (_grossMargin != null) {
-      PdfService().generateAndDownload(
-        title: "Gross Margin Calculator Result",
-        content:
-            "Gross Margin: ${_grossMargin!.toStringAsFixed(2)}%",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'Gross Margin Calculator',
+  {
+    'Revenue': revenueController.text,
+    'Cost of Goods Sold': cogsController.text,
+    'Gross Margin': grossMargin.toStringAsFixed(2) + '%',
+  },
+);
     }
   }
 
