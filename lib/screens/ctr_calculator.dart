@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+iimport 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
 
 class CTRCalculator extends StatefulWidget {
@@ -23,7 +23,7 @@ class _CTRCalculatorState extends State<CTRCalculator> {
 
   void _downloadPDF() {
     if (_ctr != null) {
-      pdfService.generateAndDownload(
+      PdfService.generateAndDownload(
         title: "CTR Calculator Result",
         content: "Click Through Rate: ${_ctr!.toStringAsFixed(2)}%",
       );
