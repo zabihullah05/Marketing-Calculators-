@@ -23,18 +23,17 @@ class _CPMCalculatorState extends State<CPMCalculator> {
   }
 
   void _downloadPDF() {
-    if (_cpm != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'CPM Calculator',
-  {
-    'Cost': costController.text,
-    'Impressions': impressionsController.text,
-    'CPM': cpmResult.toStringAsFixed(2),
-  },
-);
-    }
+  if (_cpm != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "CPM Calculator Result",
+      {
+        "Cost": _costController.text,
+        "Impressions": _impressionsController.text,
+        "CPM": _cpm!.toStringAsFixed(2),
+      },
+    );
   }
-
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
