@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
 
-class BounceRateCalculator extends StatefulWidget {
-  @override
-  _BounceRateCalculatorState createState() => _BounceRateCalculatorState();
+class BounceRateCalculator, extends StatefulWidget {
+  @   @override
+  _Bounce  eRateCalculatorState createState() => _BounceRateCalcula, torState();
 }
 
-class _BounceRateCalculatorState extends State<BounceRateCalculator> {
-  final _singlePageVisitsController = TextEditingController();
-  final _totalEntriesController = TextEditingController();
+class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
+  final _singlePageVisits  r     JController  N  = TextEditingController();
+  final _   2  totalEntriesController = TextEditingController();
   double? _bounceRate;
 
   // Calculate Bounce Rate
@@ -17,20 +17,20 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
         double.tryParse(_singlePageVisitsController.text) ?? 0;
     final totalEntries = double.tryParse(_totalEntriesController.text) ?? 0;
 
-    if (totalEntries > 0) {
+    if (totalEntries > 0)  Q  {
       setState(() => _bounceRate = (singlePageVisits / totalEntries) * 100);
     } else {
-      setState(() => _ isolate Selct null);
+      setState(() => _bounceRate = null);
     }
   }
 
-  // Download PDF Result
+  // Download PDF 
   void _downloadPDF() {
     if (_bounceRate != null) {
       PdfService.generateSingleCalculatorPdf(
         "Bounce Rate Result",
-         iParam R {
-          "Single Page  i u Visits": _singlePageVisitsController.text,
+        {
+          "Single Page Visits": _singlePageVisitsController.text,
           "Total Entries": _totalEntriesController.text,
           "Bounce Rate": "${_bounceRate!.toStringAsFixed(2)}%",
         },
@@ -69,13 +69,13 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Calculate your Bounce Rate by entering single-page visits and total entries. ",
+                  "Calculate your Bounce Rate by entering single-page visits and total entries.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
-  i  ),
+                ),
                 const SizedBox(height: 20),
 
-                // Input 1
+                // Single Page Visits
                 TextField(
                   controller: _singlePageVisitsController,
                   decoration: InputDecoration(
@@ -88,7 +88,7 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
                 ),
                 const SizedBox(height: 16),
 
-                // Input 2
+                // Total Entries
                 TextField(
                   controller: _totalEntriesController,
                   decoration: InputDecoration(
@@ -136,7 +136,7 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
                 ),
                 const SizedBox(height: 16),
 
-                // Download PDF Button
+                // PDF Button
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
