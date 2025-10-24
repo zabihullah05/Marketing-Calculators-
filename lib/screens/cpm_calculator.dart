@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class CPMCalculator extends StatefulWidget {
   @override
@@ -10,73 +7,133 @@ class CPMCalculator extends StatefulWidget {
 }
 
 class _CPMCalculatorState extends State<CPMCalculator> {
-  final _cost_controller = TextEditingController();
-  final _impressions_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _costController = TextEditingController();
+  final _impressionsController = TextEditingController();
+  double? _cpm;
 
-  void _calculate() async {
-    final cost = double.tryParse(_cost_controller.text) ?? 0.0;
-    final impressions = double.tryParse(_impressions_controller.text) ?? 0.0;
-    double result = 0.0;
-    if (impressions != 0) result = (cost / impressions) * 1000;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateCPM() {
+    final cost = double.tryParse(_costController.text) ?? 0;
+    final impressions = double.tryParse(_impressionsController.text) ?? 0;
 
-    await StorageService.saveCalculatorResult('CPMCalculator', {
-      'cost': cost,
-      'impressions': impressions,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
+    if (impressions > 0) {
+      setState(() => _cpm = (cost / impressions) * 1000);
+    } else {
+      setState(() => _cpm = null);
+    }
+  }
 
-    final prompt = 'I have a CPM of ${{result}}. Provide evaluation and 2 tips to optimize CPM.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_cpm != null) {
+      PDFService.generateAndDownload(
+        title: "CPM Calculator Result",
+        content: "Cost per Mille (CPM): \$${_cpm!.toStringAsFixed(2)}",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CPM Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("CPM Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Cost Per Mille (CPM) = (Cost / Impressions) * 1000.'),
-            SizedBox(height: 12),
-            TextField(controller: _cost_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Cost')),
-            TextField(controller: _impressions_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Impressions')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('CPMCalculator', {
-                    'Cost': _cost_controller.text,
-                    'Impressions': _impressions_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Calculate your CPM (Cost per 1,000 impressions) by entering total cost and number of impressions.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _costController,
+                  decoration: InputDecoration(
+                    labelText: "Total Cost (\$)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _impressionsController,
+                  decoration: InputDecoration(
+                    labelText: "Total Impressions",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateCPM,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate CPM"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _cpm == null
+                          ? "Your CPM result will appear here."
+                          : "Your CPM is \$${_cpm!.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
