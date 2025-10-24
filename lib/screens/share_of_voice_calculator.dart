@@ -15,7 +15,7 @@ class _ShareOfVoiceCalculatorState extends State<ShareOfVoiceCalculator> {
     final brandSpend = double.tryParse(_brandSpendController.text) ?? 0;
     final totalSpend = double.tryParse(_totalMarketSpendController.text) ?? 0;
 
-    if (totalSpend != 0) {
+    if (totalSpend > 0) {
       setState(() {
         _sov = (brandSpend / totalSpend) * 100;
       });
@@ -27,17 +27,18 @@ class _ShareOfVoiceCalculatorState extends State<ShareOfVoiceCalculator> {
   }
 
   void _downloadPDF() {
-  if (_sov != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Share of Voice Result",
-      {
-        "Brand Mentions": _brandMentionsController.text,
-        "Total Mentions": _totalMentionsController.text,
-        "SOV": "${_sov!.toStringAsFixed(2)}%",
-      },
-    );
+    if (_sov != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "Share of Voice Result",
+        {
+          "Brand Advertising Spend": _brandSpendController.text,
+          "Total Market Advertising Spend": _totalMarketSpendController.text,
+          "Share of Voice": "${_sov!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
