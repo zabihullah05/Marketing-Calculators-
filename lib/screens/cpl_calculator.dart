@@ -43,20 +43,15 @@ class _CPLCalculatorState extends State<CPLCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      background
-      Color: Colors.grey[100],
-      app
-      Bar: AppBar(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("Cost Per Lead Calculator"),
         centerTitle: true,
         elevation: 0,
       ),
       body: Center(
-        child: Single
-        Child
-        Scroll
-        View(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Container(
             width: double.infinity,
@@ -68,7 +63,7 @@ class _CPLCalculatorState extends State<CPLCalculator> {
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -125,9 +120,7 @@ class _CPLCalculatorState extends State<CPLCalculator> {
                     child: Text(
                       _cpl == null
                           ? "Your CPL result will appear here."
-                          : "Your Cost
-                          Per
-                          Lead (CPL) is \$${_cpl!.toStringAsFixed(2)}",
+                          : "Your Cost Per Lead (CPL) is \$${_cpl!.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
