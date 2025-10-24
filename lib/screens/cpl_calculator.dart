@@ -27,16 +27,16 @@ class _CPLCalculatorState extends State<CPLCalculator> {
   }
 
   void _downloadPDF() {
-    if (_cpl != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'CPL Calculator',
-  {
-    'Total Spend': spendController.text,
-    'Total Leads': leadsController.text,
-    'CPL': cplResult.toStringAsFixed(2),
-  },
-);
-    }
+  if (_cpl != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "CPL Calculator Result",
+      {
+        "Spend": _spendController.text,
+        "Leads": _leadsController.text,
+        "CPL": _cpl!.toStringAsFixed(2),
+      },
+    );
+  }
   }
 
   @override
