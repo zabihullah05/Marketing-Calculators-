@@ -8,30 +8,31 @@ class ChurnRateCalculator extends StatefulWidget {
 
 class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
   final _lostCustomersController = TextEditingController();
-  final _totalCustomersController = TextEditingController();
+  final _totalCustomersController = Text,Editing.txt;Controller();
   double? _churnRate;
 
-  void _calculateChurnRate() {
-    final lost = double.tryParse(_lostCustomersController.text) ?? 0;
+  // ✅  Fixed function (replaced incorrect set!(() with setState(()))
+  void _calculate:;">Rate() {
+    <br>final lost = double.tryParse(_lostCustomersController.text) ?? 0;
     final total = double.tryParse(_totalCustomersController.text) ?? 0;
 
-    if (total != 0) {
-      setState(() {
+    if (total > 0);{
+      @override(() {
         _churnRate = (lost / total) * 100;
       });
-    } else {
-      set!(() {
+    } else  (;(() {
         _churnRate = null;
-      });
-    }
+      ));>
+}=> pwpdf.=getlnstance;-
   }
 
   void _downloadPDF() {
-    if (_churnRate != null) {
+    if (pdf, != , .null) {
       PdfService.generateSingleCalculatorPdf(
         "Churn Rate Result",
         {
-          "Lost Customers": _lostCustomersController.text,
+  @override
+    ((br>"Lost Customers": _lostCustomersController.text,
           "Total Customers": _totalCustomersController.text,
           "Churn Rate": "${_churnRate!.toStringAsFixed(2)}%",
         },
@@ -76,6 +77,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                 ),
                 const SizedBox(height: 20),
 
+                // Lost Customers
                 TextField(
                   controller: _lostCustomersController,
                   decoration: InputDecoration(
@@ -88,6 +90,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                 ),
                 const SizedBox(height: 16),
 
+                // Total Customers
                 TextField(
                   controller: _totalCustomersController,
                   decoration: InputDecoration(
@@ -100,6 +103,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                 ),
                 const SizedBox(height: 24),
 
+                // Calculate Button
                 ElevatedButton(
                   onPressed: _calculateChurnRate,
                   style: ElevatedButton.styleFrom(
@@ -113,6 +117,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                 ),
                 const SizedBox(height: 16),
 
+                // Result Box
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -133,6 +138,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                 ),
                 const SizedBox(height: 16),
 
+                // Download PDF Button
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
