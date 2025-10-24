@@ -22,16 +22,16 @@ class _AOVCalculatorState extends State<AOVCalculator> {
   }
 
   void _downloadPDF() {
-    if (_aov != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'AOV Calculator',
-  {
-    'Total Revenue': revenueController.text,
-    'Total Orders': ordersController.text,
-    'AOV': aovResult.toStringAsFixed(2),
-  },
-);
-    }
+  if (_aov != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "AOV Calculator Result",
+      {
+        "Total Revenue": _totalRevenueController.text,
+        "Orders": _ordersController.text,
+        "AOV": _aov!.toStringAsFixed(2),
+      },
+    );
+  }
   }
 
   @override
