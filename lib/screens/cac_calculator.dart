@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class CACCalculator extends StatefulWidget {
   @override
@@ -10,73 +7,138 @@ class CACCalculator extends StatefulWidget {
 }
 
 class _CACCalculatorState extends State<CACCalculator> {
-  final _cost_controller = TextEditingController();
-  final _new_customers_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _totalCostController = TextEditingController();
+  final _newCustomersController = TextEditingController();
+  double? _cac;
 
-  void _calculate() async {
-    final cost = double.tryParse(_cost_controller.text) ?? 0.0;
-    final new_customers = double.tryParse(_new_customers_controller.text) ?? 0.0;
-    double result = 0.0;
-    if (new_customers != 0) result = cost / new_customers;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateCAC() {
+    final cost = double.tryParse(_totalCostController.text) ?? 0;
+    final newCustomers = double.tryParse(_newCustomersController.text) ?? 0;
 
-    await StorageService.saveCalculatorResult('CACCalculator', {
-      'cost': cost,
-      'new_customers': new_customers,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
+    if (newCustomers != 0) {
+      setState(() {
+        _cac = cost / newCustomers;
+      });
+    } else {
+      setState(() {
+        _cac = 0;
+      });
+    }
+  }
 
-    final prompt = 'I have a CAC of ${{result}}. Provide evaluation and 2 tips to lower CAC.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_cac != null) {
+      PDFService.generateAndDownload(
+        title: "CAC Calculator Result",
+        content:
+            "Customer Acquisition Cost (CAC): \$${_cac!.toStringAsFixed(2)}",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CAC Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("CAC Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Customer Acquisition Cost = Cost / New Customers.'),
-            SizedBox(height: 12),
-            TextField(controller: _cost_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Cost')),
-            TextField(controller: _new_customers_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'New Customers')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('CACCalculator', {
-                    'Cost': _cost_controller.text,
-                    'New Customers': _new_customers_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Calculate your Customer Acquisition Cost by dividing your total marketing cost by the number of new customers acquired.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _totalCostController,
+                  decoration: InputDecoration(
+                    labelText: "Total Marketing Cost (\$)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _newCustomersController,
+                  decoration: InputDecoration(
+                    labelText: "Number of New Customers",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateCAC,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate CAC"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _cac == null
+                          ? "Your CAC result will appear here."
+                          : "Your Customer Acquisition Cost is \$${_cac!.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
