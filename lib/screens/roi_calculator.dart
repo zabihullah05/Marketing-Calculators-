@@ -22,16 +22,16 @@ class _ROICalculatorState extends State<ROICalculator> {
   }
 
   void _downloadPDF() {
-    if (_roi != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'ROI Calculator',
-  {
-    'Investment': investmentController.text,
-    'Return': returnController.text,
-    'ROI': roiResult.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_roi != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "ROI Calculator Result",
+      {
+        "Investment": _investmentController.text,
+        "Return": _returnController.text,
+        "ROI": "${_roi!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
