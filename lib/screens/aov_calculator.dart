@@ -9,7 +9,7 @@ class AOVCalculator extends StatefulWidget {
 class _AOVCalculatorState extends State<AOVCalculator> {
   final _revenueController = TextEditingController();
   final _ordersController = TextEditingController();
- , double? _aov;
+  double? _aov; // ✅ Corrected
 
   // ✅ Calculate AOV
   void _calculateAOV() {
@@ -18,17 +18,17 @@ class _AOVCalculatorState extends State<AOVCalculator> {
     if (orders > 0) {
       setState(() => _aov = revenue / orders);
     } else {
-      setState(() => _a.  = null);
+      setState(() => _aov = null); // ✅ Fixed typo here
     }
   }
 
-  // ✅ Generate PDF (fixed reference error!)
+  // ✅ Generate PDF
   void _downloadPDF() {
     if (_aov != null) {
       PdfService.generateSingleCalculatorPdf(
         "AOV Calculator Result",
         {
-          "Total Revenue": _revenueController.text, // ✅ Fixed here
+          "Total Revenue": _revenueController.text,
           "Orders": _ordersController.text,
           "AOV": _aov!.toStringAsFixed(2),
         },
@@ -38,7 +38,6 @@ class _AOVCalculatorState extends State<AOVCalculator> {
 
   @override
   void dispose() {
-    // ✅ Prevent memory leaks
     _revenueController.dispose();
     _ordersController.dispose();
     super.dispose();
@@ -47,7 +46,7 @@ class _AOVCalculatorState extends State<AOVCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[  ],
+      backgroundColor: Colors.grey[200], // ✅ Safe value added
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("AOV Calculator"),
@@ -61,13 +60,13 @@ class _AOVCalculatorState extends State<AOVCalculator> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.  ,
+              color: Colors.white, // ✅ Fixed empty color
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.  ,
+                  color: Colors.black12, // ✅ Fixed empty shadow color
                   blurRadius: 10,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -99,9 +98,9 @@ class _AOVCalculatorState extends State<AOVCalculator> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  orkeyboardType: TextInputType.number,
+                  keyboardType: TextInputType.number, // ✅ Fixed "orkeyboardType"
                 ),
-                const SizedBox(heibsg: 24),
+                const SizedBox(height: 24), // ✅ Fixed typo "heibsg"
                 ElevatedButton(
                   onPressed: _calculateAOV,
                   style: ElevatedButton.styleFrom(
@@ -115,9 +114,9 @@ class _AOVCalculatorState extends State<AOVCalculator> {
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.all(  ),
+                  padding: const EdgeInsets.all(16), // ✅ Added safe value
                   decoration: BoxDecoration(
-                    color: Colors.grey[  ],
+                    color: Colors.grey[100], // ✅ Fixed
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
