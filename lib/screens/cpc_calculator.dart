@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class CPCCalculator extends StatefulWidget {
   @override
@@ -10,73 +7,132 @@ class CPCCalculator extends StatefulWidget {
 }
 
 class _CPCCalculatorState extends State<CPCCalculator> {
-  final _cost_controller = TextEditingController();
-  final _clicks_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _costController = TextEditingController();
+  final _clicksController = TextEditingController();
+  double? _cpc;
 
-  void _calculate() async {
-    final cost = double.tryParse(_cost_controller.text) ?? 0.0;
-    final clicks = double.tryParse(_clicks_controller.text) ?? 0.0;
-    double result = 0.0;
-    if (clicks != 0) result = cost / clicks;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateCPC() {
+    final cost = double.tryParse(_costController.text) ?? 0;
+    final clicks = double.tryParse(_clicksController.text) ?? 0;
+    if (clicks > 0) {
+      setState(() => _cpc = cost / clicks);
+    } else {
+      setState(() => _cpc = null);
+    }
+  }
 
-    await StorageService.saveCalculatorResult('CPCCalculator', {
-      'cost': cost,
-      'clicks': clicks,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
-
-    final prompt = 'I have a CPC of ${{result}}. Provide evaluation and 2 tips to lower CPC.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_cpc != null) {
+      PDFService.generateAndDownload(
+        title: "CPC Calculator Result",
+        content: "Cost Per Click: \$${_cpc!.toStringAsFixed(2)}",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CPC Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("CPC Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Cost Per Click (CPC) = Cost / Clicks.'),
-            SizedBox(height: 12),
-            TextField(controller: _cost_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Cost')),
-            TextField(controller: _clicks_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Clicks')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('CPCCalculator', {
-                    'Cost': _cost_controller.text,
-                    'Clicks': _clicks_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Calculate your Cost Per Click by entering total cost and total clicks below.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _costController,
+                  decoration: InputDecoration(
+                    labelText: "Total Cost (\$)",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _clicksController,
+                  decoration: InputDecoration(
+                    labelText: "Total Clicks",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateCPC,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate CPC"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _cpc == null
+                          ? "Your CPC will appear here."
+                          : "Your CPC is \$${_cpc!.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
