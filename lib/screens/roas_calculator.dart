@@ -28,11 +28,14 @@ class _ROASCalculatorState extends State<ROASCalculator> {
 
   void _downloadPDF() {
     if (_roas != null) {
-      PdfService().generateAndDownload(
-        title: "ROAS Calculator Result",
-        content:
-            "Return On Ad Spend (ROAS): ${_roas!.toStringAsFixed(2)}x",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'ROAS Calculator',
+  {
+    'Revenue': revenueController.text,
+    'Ad Spend': adSpendController.text,
+    'ROAS': roasResult.toStringAsFixed(2),
+  },
+);
     }
   }
 
