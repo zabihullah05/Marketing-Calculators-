@@ -1,19 +1,17 @@
-import 'package:flutter/material.dart';
-import '../services/pdf_service.dart';
-
-class ConversionRateCalculator extends StatefulWidget {
+import 'package:flutter/material.dart
+'../services/pdf_service.dart
+class  RateCalculator extends StatefulWidget
   @override
-  _ConversionRateCalculatorState createState() => _ConversionRateCalculatorState();
-}
+  7  _  State createState() => _  State();
 
-class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
-  final _conversionsController = TextEditingController();
-  final _totalVisitorsController = TextEditingController();
-  double? _conversionRate;
+class  1  2  3  {
+               = TextEditing  ()
+               = TextEditing  ();
+  4  double? _conversionRate;
 
-  void _calculateConversionRate() {
-    final conversions = double.tryParse(_conversionsController.text) ?? 0;
-    final totalVisitors = double.tryParse(_totalVisitorsController.text) ?? 0;
+  void   Rate() {
+    final  7  77  8  ?? 0;
+    final  7  7  7  () ?? 0;
 
     if (totalVisitors > 0) {
       setState(() => _conversionRate = (conversions / totalVisitors) * 100);
@@ -23,16 +21,17 @@ class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
   }
 
   void _downloadPDF() {
-  if (_conversionRate != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Conversion Rate Result",
-      {
-        "Conversions": _conversionsController.text,
-        "Visitors": _visitorsController.text,
-        "Conversion Rate": "${_conversionRate!.toStringAsFixed(2)}%",
-      },
-    );
-  }
+    if (_conversionRate != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "  Rate Result",
+        {
+          "Conversions": _conversionsController.text,
+          // Fixed this below line ⬇️
+          "Visitors": _totalVisitorsController.text,
+          "Conversion Rate": "${_conversionRate!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
 
   @override
@@ -41,7 +40,7 @@ class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
-        title: const Text("Conversion Rate Calculator"),
+        title: const Text("  Rate Calculator"),
         centerTitle: true,
         elevation: 0,
       ),
