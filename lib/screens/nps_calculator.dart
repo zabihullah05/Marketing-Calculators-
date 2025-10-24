@@ -30,11 +30,15 @@ class _NPSCalculatorState extends State<NPSCalculator> {
 
   void _downloadPDF() {
     if (_npsScore != null) {
-      PdfService().generateAndDownload(
-        title: "NPS Calculator Result",
-        content:
-            "Your Net Promoter Score (NPS) is ${_npsScore!.toStringAsFixed(2)}. This measures overall customer satisfaction and loyalty based on feedback responses.",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'NPS Calculator',
+  {
+    'Promoters': promotersController.text,
+    'Detractors': detractorsController.text,
+    'Total Respondents': totalRespondentsController.text,
+    'NPS': npsScore.toStringAsFixed(0),
+  },
+);
     }
   }
 
