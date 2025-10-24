@@ -1,33 +1,41 @@
-import 'package:flutter/material.dart
-'../services/pdf_service.dart
-class  RateCalculator extends StatefulWidget
+import 'package:flutter/material.dart';
+import '../services/pdf_service.dart';
+
+class ConversionRateCalculator extends StatefulWidget {
   @override
-  7  _  State createState() => _  State();
+  _ConversionRateCalculatorState createState() =>
+      _ConversionRateCalculatorState();
+}
 
-class  1  2  3  {
-               = TextEditing  ()
-               = TextEditing  ();
-  4  double? _conversionRate;
+class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
+  final _conversionsController = TextEditingController();
+  final _totalVisitorsController = TextEditingController();
+  double? _conversionRate;
 
-  void   Rate() {
-    final  7  77  8  ?? 0;
-    final  7  7  7  () ?? 0;
+  // Calculate Conversion Rate
+  void _calculateConversionRate() {
+    final conversions = double.tryParse(_conversionsController.text) ?? 0;
+    final totalVisitors = double.tryParse(_totalVisitorsController.text) ?? 0;
 
     if (totalVisitors > 0) {
-      setState(() => _conversionRate = (conversions / totalVisitors) * 100);
+      setState(() {
+        _conversionRate = (conversions / totalVisitors) * 100;
+      });
     } else {
-      setState(() => _conversionRate = null);
+      setState(() {
+        _conversionRate = null;
+      });
     }
   }
 
+  // Download PDF
   void _downloadPDF() {
     if (_conversionRate != null) {
       PdfService.generateSingleCalculatorPdf(
-        "  Rate Result",
+        "Conversion Rate Result",
         {
           "Conversions": _conversionsController.text,
-          // Fixed this below line ⬇️
-          "Visitors": _totalVisitorsController.text,
+          "Total Visitors": _totalVisitorsController.text,
           "Conversion Rate": "${_conversionRate!.toStringAsFixed(2)}%",
         },
       );
@@ -40,7 +48,7 @@ class  1  2  3  {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
-        title: const Text("  Rate Calculator"),
+        title: const Text("Conversion Rate Calculator"),
         centerTitle: true,
         elevation: 0,
       ),
@@ -70,6 +78,8 @@ class  1  2  3  {
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
+
+                // Input - Conversions
                 TextField(
                   controller: _conversionsController,
                   decoration: InputDecoration(
@@ -81,6 +91,8 @@ class  1  2  3  {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
+
+                // Input - Total Visitors
                 TextField(
                   controller: _totalVisitorsController,
                   decoration: InputDecoration(
@@ -92,6 +104,8 @@ class  1  2  3  {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 24),
+
+                // Button - Calculate
                 ElevatedButton(
                   onPressed: _calculateConversionRate,
                   style: ElevatedButton.styleFrom(
@@ -104,6 +118,8 @@ class  1  2  3  {
                   child: const Text("Calculate Conversion Rate"),
                 ),
                 const SizedBox(height: 16),
+
+                // Result Display
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -123,6 +139,8 @@ class  1  2  3  {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                // Button - Download PDF
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
@@ -140,5 +158,12 @@ class  1  2  3  {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _conversionsController.dispose();
+    _totalVisitorsController.dispose();
+    super.dispose();
   }
 }
