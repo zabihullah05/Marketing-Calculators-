@@ -3,7 +3,8 @@ import '../services/pdf_service.dart';
 
 class EmailOpenRateCalculator extends StatefulWidget {
   @override
-  _EmailOpenRateCalculatorState createState() => _EmailOpenRateCalculatorState();
+  _EmailOpenRateCalculatorState createState() =>
+      _EmailOpenRateCalculatorState();
 }
 
 class _EmailOpenRateCalculatorState extends State<EmailOpenRateCalculator> {
@@ -27,16 +28,16 @@ class _EmailOpenRateCalculatorState extends State<EmailOpenRateCalculator> {
   }
 
   void _downloadPDF() {
-  if (_openRate != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "Email Open Rate Result",
-      {
-        "Emails Opened": _openedController.text,
-        "Emails Sent": _sentController.text,
-        "Open Rate": "${_openRate!.toStringAsFixed(2)}%",
-      },
-    );
-  }
+    if (_openRate != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "Email Open Rate Result",
+        {
+          "Emails Opened": _emailsOpenedController.text,
+          "Emails Sent": _emailsSentController.text,
+          "Open Rate": "${_openRate!.toStringAsFixed(2)}%",
+        },
+      );
+    }
   }
 
   @override
