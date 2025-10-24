@@ -28,7 +28,7 @@ class _EmailOpenRateCalculatorState extends State<EmailOpenRateCalculator> {
 
   void _downloadPDF() {
     if (_openRate != null) {
-      PDFService.generateAndDownload(
+      pdfService.generateAndDownload(
         title: "Email Open Rate Calculator Result",
         content: "Email Open Rate: ${_openRate!.toStringAsFixed(2)}%",
       );
