@@ -24,7 +24,7 @@ class _ConversionRateCalculatorState extends State<ConversionRateCalculator> {
 
   void _downloadPDF() {
     if (_conversionRate != null) {
-      PdfService.generateAndDownload(
+      PdfService().generateAndDownload(
         title: "Conversion Rate Calculator Result",
         content: "Conversion Rate: ${_conversionRate!.toStringAsFixed(2)}%",
       );
