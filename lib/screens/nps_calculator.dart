@@ -30,7 +30,7 @@ class _NPSCalculatorState extends State<NPSCalculator> {
 
   void _downloadPDF() {
     if (_npsScore != null) {
-      PdfService.generateAndDownload(
+      PdfService().generateAndDownload(
         title: "NPS Calculator Result",
         content:
             "Your Net Promoter Score (NPS) is ${_npsScore!.toStringAsFixed(2)}. This measures overall customer satisfaction and loyalty based on feedback responses.",
