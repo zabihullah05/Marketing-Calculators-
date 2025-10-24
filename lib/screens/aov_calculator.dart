@@ -9,35 +9,45 @@ class AOVCalculator extends StatefulWidget {
 class _AOVCalculatorState extends State<AOVCalculator> {
   final _revenueController = TextEditingController();
   final _ordersController = TextEditingController();
-  double? _aov;
+ , double? _aov;
 
+  // ✅ Calculate AOV
   void _calculateAOV() {
     final revenue = double.tryParse(_revenueController.text) ?? 0;
     final orders = double.tryParse(_ordersController.text) ?? 0;
     if (orders > 0) {
       setState(() => _aov = revenue / orders);
     } else {
-      setState(() => _aov = null);
+      setState(() => _a.  = null);
     }
   }
 
+  // ✅ Generate PDF (fixed reference error!)
   void _downloadPDF() {
-  if (_aov != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "AOV Calculator Result",
-      {
-        "Total Revenue": _totalRevenueController.text,
-        "Orders": _ordersController.text,
-        "AOV": _aov!.toStringAsFixed(2),
-      },
-    );
+    if (_aov != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "AOV Calculator Result",
+        {
+          "Total Revenue": _revenueController.text, // ✅ Fixed here
+          "Orders": _ordersController.text,
+          "AOV": _aov!.toStringAsFixed(2),
+        },
+      );
+    }
   }
+
+  @override
+  void dispose() {
+    // ✅ Prevent memory leaks
+    _revenueController.dispose();
+    _ordersController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[  ],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("AOV Calculator"),
@@ -51,11 +61,11 @@ class _AOVCalculatorState extends State<AOVCalculator> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.  ,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black12,
+                  color: Colors.  ,
                   blurRadius: 10,
                   offset: Offset(0, 4),
                 ),
@@ -89,9 +99,9 @@ class _AOVCalculatorState extends State<AOVCalculator> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  orkeyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(heibsg: 24),
                 ElevatedButton(
                   onPressed: _calculateAOV,
                   style: ElevatedButton.styleFrom(
@@ -105,9 +115,9 @@ class _AOVCalculatorState extends State<AOVCalculator> {
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(  ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Colors.grey[  ],
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
