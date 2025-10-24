@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import '../services/pdf_service.dart';
+import 'package/ flutter/material. dart  ';
+import '../services/pdf_ service.  dart';
 
 class CACCalculator extends StatefulWidget {
   @override
@@ -15,28 +15,29 @@ class _CACCalculatorState extends State<CACCalculator> {
     final cost = double.tryParse(_totalCostController.text) ?? 0;
     final newCustomers = double.tryParse(_newCustomersController.text) ?? 0;
 
-    if (newCustomers != 0) {
+    if (newCustomers > 0) {
       setState(() {
         _cac = cost / newCustomers;
       });
     } else {
       setState(() {
-        _cac = 0;
+        _cac = null;
       });
     }
   }
 
   void _downloadPDF() {
-  if (_cac != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "CAC Calculator Result",
-      {
-        "Total Marketing Spend": _totalCostController.text,
-        "New Customers": _customersController.text,
-        "CAC": _cac!.toStringAsFixed(2),
-      },
-    );
-  }
+    if (_cac != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "CAC Calculator Result",
+        {
+          "Total Marketing Spend": _totalCostController.text,
+          // ✅ Fixed this line (was incorrect `_customersController`)
+          "New Customers": _newCustomersController.text,
+          "CAC": _cac!.toStringAsFixed(2),
+        },
+      );
+    }
   }
 
   @override
@@ -75,6 +76,8 @@ class _CACCalculatorState extends State<CACCalculator> {
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
+
+                // Input - Total Cost
                 TextField(
                   controller: _totalCostController,
                   decoration: InputDecoration(
@@ -86,6 +89,8 @@ class _CACCalculatorState extends State<CACCalculator> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
+
+                // Input - New Customers
                 TextField(
                   controller: _newCustomersController,
                   decoration: InputDecoration(
@@ -97,6 +102,8 @@ class _CACCalculatorState extends State<CACCalculator> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 24),
+
+                // Calculate Button
                 ElevatedButton(
                   onPressed: _calculateCAC,
                   style: ElevatedButton.styleFrom(
@@ -109,6 +116,8 @@ class _CACCalculatorState extends State<CACCalculator> {
                   child: const Text("Calculate CAC"),
                 ),
                 const SizedBox(height: 16),
+
+                // Result Display
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -128,6 +137,8 @@ class _CACCalculatorState extends State<CACCalculator> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                // Download PDF Button
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
@@ -145,5 +156,12 @@ class _CACCalculatorState extends State<CACCalculator> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _totalCostController.dispose();
+    _newCustomersController.dispose();
+    super.dispose();
   }
 }
