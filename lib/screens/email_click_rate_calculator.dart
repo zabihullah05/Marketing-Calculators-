@@ -27,16 +27,16 @@ class _EmailClickRateCalculatorState extends State<EmailClickRateCalculator> {
   }
 
   void _downloadPDF() {
-    if (_clickRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Email Click Rate Calculator',
-  {
-    'Clicks': clicksController.text,
-    'Emails Delivered': deliveredController.text,
-    'Click Rate': clickRate.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_clickRate != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Email Click Rate Result",
+      {
+        "Clicks": _clicksController.text,
+        "Emails Delivered": _deliveredController.text,
+        "Click Rate": "${_clickRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
