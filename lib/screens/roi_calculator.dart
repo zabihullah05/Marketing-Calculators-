@@ -23,10 +23,14 @@ class _ROICalculatorState extends State<ROICalculator> {
 
   void _downloadPDF() {
     if (_roi != null) {
-      PdfService().generateAndDownload(
-        title: "ROI Calculator Result",
-        content: "Return on Investment: ${_roi!.toStringAsFixed(2)}%",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'ROI Calculator',
+  {
+    'Investment': investmentController.text,
+    'Return': returnController.text,
+    'ROI': roiResult.toStringAsFixed(2) + '%',
+  },
+);
     }
   }
 
