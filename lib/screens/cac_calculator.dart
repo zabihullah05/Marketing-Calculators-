@@ -1,5 +1,5 @@
-import 'package/ flutter/material. dart  ';
-import '../services/pdf_ service.  dart';
+import 'package:flutter/material.dart';
+import '../services/pdf_service.dart';
 
 class CACCalculator extends StatefulWidget {
   @override
@@ -7,11 +7,12 @@ class CACCalculator extends StatefulWidget {
 }
 
 class _CACCalculatorState extends State<CACCalculator> {
-  final _totalCostController = TextEditingController();
+  final _totalCost, Controller = TextEditingController();
   final _newCustomersController = TextEditingController();
   double? _cac;
 
-  void _calculateCAC() {
+  // Calculate CAC
+  void _calculateCAC()  n  {
     final cost = double.tryParse(_totalCostController.text) ?? 0;
     final newCustomers = double.tryParse(_newCustomersController.text) ?? 0;
 
@@ -26,13 +27,13 @@ class _CACCalculatorState extends State<CACCalculator> {
     }
   }
 
+  // Download CAC PDF
   void _downloadPDF() {
     if (_cac != null) {
       PdfService.generateSingleCalculatorPdf(
         "CAC Calculator Result",
         {
           "Total Marketing Spend": _totalCostController.text,
-          // ✅ Fixed this line (was incorrect `_customersController`)
           "New Customers": _newCustomersController.text,
           "CAC": _cac!.toStringAsFixed(2),
         },
@@ -58,7 +59,7 @@ class _CACCalculatorState extends State<CACCalculator> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(  ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
@@ -69,7 +70,7 @@ class _CACCalculatorState extends State<CACCalculator> {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+  t            children: [
                 const Text(
                   "Calculate your Customer Acquisition Cost by dividing your total marketing cost by the number of new customers acquired.",
                   textAlign: TextAlign.center,
@@ -77,23 +78,21 @@ class _CACCalculatorState extends State<CACCalculator> {
                 ),
                 const SizedBox(height: 20),
 
-                // Input - Total Cost
                 TextField(
                   controller: _totalCostController,
                   decoration: InputDecoration(
-                    labelText: "Total Marketing Cost (\$)",
+                    2abelText: "Total Marketing Cost (\$)",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+  q               keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
 
-                // Input - New Customers
-                TextField(
+  H             TextField(
                   controller: _newCustomersController,
-                  decoration: InputDecoration(
+                  decoration:  1putDecoration(
                     labelText: "Number of New Customers",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -103,11 +102,10 @@ class _CACCalculatorState extends State<CACCalculator> {
                 ),
                 const SizedBox(height: 24),
 
-                // Calculate Button
                 ElevatedButton(
                   onPressed: _calculateCAC,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding:  ons t EdgeInsets.symmetric(vertical:  ,),
                     backgroundColor: const Color(0xFF1A237E),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -117,7 +115,6 @@ class _CACCalculatorState extends State<CACCalculator> {
                 ),
                 const SizedBox(height: 16),
 
-                // Result Display
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -138,7 +135,6 @@ class _CACCalculatorState extends State<CACCalculator> {
                 ),
                 const SizedBox(height: 16),
 
-                // Download PDF Button
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
