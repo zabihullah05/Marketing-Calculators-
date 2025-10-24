@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
-import '../services/storage_service.dart';
-import '../services/gemini_service.dart';
 
 class EngagementRateCalculator extends StatefulWidget {
   @override
@@ -10,73 +7,138 @@ class EngagementRateCalculator extends StatefulWidget {
 }
 
 class _EngagementRateCalculatorState extends State<EngagementRateCalculator> {
-  final _engagements_controller = TextEditingController();
-  final _reach_controller = TextEditingController();
-  double? _result;
-  String _recommendation = '';
+  final _engagementsController = TextEditingController();
+  final _followersController = TextEditingController();
+  double? _engagementRate;
 
-  void _calculate() async {
-    final engagements = double.tryParse(_engagements_controller.text) ?? 0.0;
-    final reach = double.tryParse(_reach_controller.text) ?? 0.0;
-    double result = 0.0;
-    if (reach != 0) result = (engagements / reach) * 100;
-    setState(() { _result = result; _recommendation = 'Generating...'; });
+  void _calculateEngagementRate() {
+    final engagements = double.tryParse(_engagementsController.text) ?? 0;
+    final followers = double.tryParse(_followersController.text) ?? 0;
 
-    await StorageService.saveCalculatorResult('EngagementRateCalculator', {
-      'engagements': engagements,
-      'reach': reach,
-      'result': result,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
+    if (followers != 0) {
+      setState(() {
+        _engagementRate = (engagements / followers) * 100;
+      });
+    } else {
+      setState(() {
+        _engagementRate = 0;
+      });
+    }
+  }
 
-    final prompt = 'I have an Engagement Rate of {{result}}%. Provide evaluation and 2 tips to increase engagement.'.replaceAll('{result}', _result?.toStringAsFixed(2) ?? '0');
-    try {
-      final resp = await GeminiService.query(prompt);
-      setState(() { _recommendation = resp; });
-    } catch (e) {
-      setState(() { _recommendation = 'AI recommendation unavailable.'; });
+  void _downloadPDF() {
+    if (_engagementRate != null) {
+      PDFService.generateAndDownload(
+        title: "Engagement Rate Calculator Result",
+        content:
+            "Engagement Rate: ${_engagementRate!.toStringAsFixed(2)}%",
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('EngagementRate Calculator'), backgroundColor: Color(0xFF1A237E)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A237E),
+        title: const Text("Engagement Rate Calculator"),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Engagement Rate = (Engagements / Reach) * 100.'),
-            SizedBox(height: 12),
-            TextField(controller: _engagements_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Engagements')),
-            TextField(controller: _reach_controller, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Reach')),
-            SizedBox(height: 18),
-            ElevatedButton(onPressed: _calculate, child: Text('Calculate'), style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF3949AB))),
-            SizedBox(height: 18),
-            if (_result != null) Card(child: Padding(padding: EdgeInsets.all(12.0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Result: ' + (_result is double ? _result!.toStringAsFixed(2) : _result.toString()), style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await PdfService.generateSingleCalculatorPdf('EngagementRateCalculator', {
-                    'Engagements': _engagements_controller.text,
-                    'Reach': _reach_controller.text,
-                    'Result': _result!.toStringAsFixed(2),
-                  });
-                },
-                icon: Icon(Icons.picture_as_pdf),
-                label: Text('Download Result as PDF'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Color(0xFF1A237E)),
-              ),
-              SizedBox(height: 8),
-              Text('AI Recommendation:', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              Text(_recommendation),
-            ])))
-          ],
-        ),
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Calculate how engaged your audience is by dividing total engagements (likes, comments, shares) by total followers.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _engagementsController,
+                  decoration: InputDecoration(
+                    labelText: "Total Engagements",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _followersController,
+                  decoration: InputDecoration(
+                    labelText: "Total Followers",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _calculateEngagementRate,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: const Color(0xFF1A237E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Calculate Engagement Rate"),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _engagementRate == null
+                          ? "Your Engagement Rate result will appear here."
+                          : "Your Engagement Rate is ${_engagementRate!.toStringAsFixed(2)}%",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _downloadPDF,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.indigoAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Download Result as PDF"),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
