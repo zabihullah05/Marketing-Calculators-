@@ -23,10 +23,14 @@ class _CPCCalculatorState extends State<CPCCalculator> {
 
   void _downloadPDF() {
     if (_cpc != null) {
-      PdfService().generateAndDownload(
-        title: "CPC Calculator Result",
-        content: "Cost Per Click: \$${_cpc!.toStringAsFixed(2)}",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'CPC Calculator',
+  {
+    'Total Cost': costController.text,
+    'Total Clicks': clicksController.text,
+    'CPC': cpcResult.toStringAsFixed(2),
+  },
+);
     }
   }
 
