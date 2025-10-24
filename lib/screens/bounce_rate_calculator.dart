@@ -23,16 +23,16 @@ class _BounceRateCalculatorState extends State<BounceRateCalculator> {
   }
 
   void _downloadPDF() {
-    if (_bounceRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-  'Bounce Rate Calculator',
-  {
-    'Single Page Visits': singlePageVisitsController.text,
-    'Total Entries': totalEntriesController.text,
-    'Bounce Rate': bounceRate.toStringAsFixed(2) + '%',
-  },
-);
-    }
+  if (_bounceRate != null) {
+    PdfService.generateSingleCalculatorPdf(
+      "Bounce Rate Result",
+      {
+        "Single Page Visits": _singlePageVisitsController.text,
+        "Total Entries": _totalEntriesController.text,
+        "Bounce Rate": "${_bounceRate!.toStringAsFixed(2)}%",
+      },
+    );
+  }
   }
 
   @override
