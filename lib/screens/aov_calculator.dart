@@ -23,7 +23,7 @@ class _AOVCalculatorState extends State<AOVCalculator> {
 
   void _downloadPDF() {
     if (_aov != null) {
-      PDFService.generateAndDownload(
+      pdfService.generateAndDownload(
         title: "AOV Calculator Result",
         content: "Average Order Value: \$${_aov!.toStringAsFixed(2)}",
       );
