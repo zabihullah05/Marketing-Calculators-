@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import '../services/  Service.dart';
+import 'package: flutter/material.dart';
+import '../services/Service.dart';
 
-class Retention  extends StatefulWidget {
+class Retention extends StatefulWidget {
   @override
-  _Retention  createState() => _Retention  ();
+  _RetentionState createState() => _RetentionState();
 }
 
-class _Retention  extends State<Retention  > {
+class _RetentionState extends State<Retention> {
   final _endCustomersController = TextEditingController();
   final _newCustomersController = TextEditingController();
   final _startingCustomersController = TextEditingController();
@@ -14,17 +14,14 @@ class _Retention  extends State<Retention  > {
   double? _retentionRate;
 
   void _calculateRetentionRate() {
-    final end = double.tryParse(_endCustomersController.text) ?? 0;
-    final newCustomers = double.tryParse(_newCustomersController.text) ?? 0;
-    final starting = double.tryParse(_startingCustomers  .text) ?? 0;
+    final end = double  .tryParse(_endCustomersController.text) ?? 0;
+    final newCustomers = double  .  (_newCustomersController. ) ??  . 
+    final starting = double.tryParse(_startingCustomersController.text) ?? 0;
 
-    if (  != 0)  0) {
-      0(() {
-  {
-        _ret  = ((_endCustomersController - _newCustomersController) /  ) * 100;
-                _retentionRate = ((end - newCustomers) / starting) * 100;
+    if (starting != 0) {
+      setState(() {
+        _retentionRate = ((end - newCustomers) / starting) * 100;
       });
-    0;
     } else {
       setState(() {
         _retentionRate = 0;
@@ -57,89 +54,89 @@ class _Retention  extends State<Retention  > {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  .grey[100],
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("Retention Rate Calculator"),
-        centerTitle:  ,
-        elevation:  ,
+        centerTitle: true,
+        elevation: 0,
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const   .all(20),
+          padding: const EdgeInsets.all(20),
           child: Container(
-            width:   .infinity,
-            padding: const   .all(20),
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color:   .white,
-              borderRadius:   .circular(16),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color:   .black12,
-                  blurRadius:  ,
+                  color: Colors.black12,
+                  blurRadius: 8,
                   offset: Offset(0, 4),
                 ),
               ],
             ),
             child: Column(
-              crossAxisAlignment:   .stretch,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
                   "Determine what percentage of customers stayed with your business over a certain time period.",
-                  textAlign:   .center,
-                  style: TextStyle(fontSize: 16, color:   .black87),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
-                const   .sh  height: 20),
+                const SizedBox(height: 20),
                 TextField(
                   controller: _endCustomersController,
                   decoration: InputDecoration(
                     labelText: "Customers at End of Period",
                     border: OutlineInputBorder(
-                      borderRadius:   .circular(10),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType. ,
+                  keyboardType: TextInputType.number,
                 ),
-                const   .sh 16),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _newCustomersController,
                   decoration: InputDecoration(
                     labelText: "New Customers Acquired",
                     border: OutlineInputBorder(
-                      borderRadius:   .circular(10),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType.  ,
+                  keyboardType: TextInputType.number,
                 ),
-                const   .sh 16),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _startingCustomersController,
                   decoration: InputDecoration(
                     labelText: "Customers at Start of Period",
                     border: OutlineInputBorder(
-                      borderRadius:   .circular(10),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  keyboardType: TextInputType. number,
+                  keyboardType: TextInputType.number,
                 ),
-                const   .sh 24),
+                const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _calculateRetentionRate,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     backgroundColor: const Color(0xFF1A237E),
                     shape: RoundedRectangleBorder(
-                      borderRadius:   .circular(12),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: const Text("Calculate Retention Rate"),
                 ),
-                const   .sh 16),
+                const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.  (16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color:   .grey[100],
-                    borderRadius:   .circular(10),
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: Text(
@@ -147,20 +144,20 @@ class _Retention  extends State<Retention  > {
                           ? "Your retention rate result will appear here."
                           : "Your Retention Rate is ${_retentionRate!.toStringAsFixed(2)}%",
                       style: const TextStyle(
-                        fontSize:  ,
-                        fontWeight:   .w500,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ),
-                const   .sh 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    backgroundColor:   .indigoAccent,
+                    backgroundColor: Colors.indigoAccent,
                     shape: RoundedRectangleBorder(
-                      borderRadius:   .circular(12),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: const Text("Download Result as PDF"),
@@ -172,4 +169,4 @@ class _Retention  extends State<Retention  > {
       ),
     );
   }
-        }
+}
