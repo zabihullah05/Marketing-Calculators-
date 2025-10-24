@@ -23,17 +23,17 @@ class _CLVCalculatorState extends State<CLVCalculator> {
   }
 
   void _downloadPDF() {
-  if (_clv != null) {
-    PdfService.generateSingleCalculatorPdf(
-      "CLV Calculator Result",
-      {
-        "Average Purchase Value": _avgPurchaseValueController.text,
-        "Purchase Frequency": _purchaseFrequencyController.text,
-        "Customer Lifespan": _customerLifespanController.text,
-        "CLV": _clv!.toStringAsFixed(2),
-      },
-    );
-  }
+    if (_clv != null) {
+      PdfService.generateSingleCalculatorPdf(
+        "CLV Calculator Result",
+        {
+          "Average Purchase Value": _avgPurchaseValueController.text,
+          "Purchase Frequency": _purchaseFrequencyController.text,
+          "Customer Lifespan": _customerLifespanController.text,
+          "CLV": _clv!.toStringAsFixed(2),
+        },
+      );
+    }
   }
 
   @override
