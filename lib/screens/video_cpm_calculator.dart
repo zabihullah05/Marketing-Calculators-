@@ -28,11 +28,14 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
 
   void _downloadPDF() {
     if (_videoCPM != null) {
-      PdfService().generateAndDownload(
-        title: "Video CPM Calculator Result",
-        content:
-            "Your Video CPM is ${_videoCPM!.toStringAsFixed(2)}.\n\nVideo CPM measures the cost per 1,000 video impressions — ideal for analyzing video ad campaign efficiency.",
-      );
+      PdfService.generateSingleCalculatorPdf(
+  'Video CPM Calculator',
+  {
+    'Cost': costController.text,
+    'Video Views': viewsController.text,
+    'Video CPM': videoCpmResult.toStringAsFixed(2),
+  },
+);
     }
   }
 
