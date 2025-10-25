@@ -1,12 +1,12 @@
-import 'package: flutter/material.dart';
-import '../services/Service.dart';
+import 'package:flutter/material.dart';
+import '../services/pdf_service.dart';
 
-class Retention extends StatefulWidget {
+class RetentionCalculator extends StatefulWidget {
   @override
-  _RetentionState createState() => _RetentionState();
+  _RetentionCalculatorState createState() => _RetentionCalculatorState();
 }
 
-class _RetentionState extends State<Retention> {
+class _RetentionCalculatorState extends State<RetentionCalculator> {
   final _endCustomersController = TextEditingController();
   final _newCustomersController = TextEditingController();
   final _startingCustomersController = TextEditingController();
@@ -14,11 +14,11 @@ class _RetentionState extends State<Retention> {
   double? _retentionRate;
 
   void _calculateRetentionRate() {
-    final end = double  .tryParse(_endCustomersController.text) ?? 0;
-    final newCustomers = double  .  (_newCustomersController. ) ??  . 
+    final end = double.tryParse(_endCustomersController.text) ?? 0;
+    final newCustomers = double.tryParse(_newCustomersController.text) ?? 0;
     final starting = double.tryParse(_startingCustomersController.text) ?? 0;
 
-    if (starting != 0) {
+    if (starting > 0) {
       setState(() {
         _retentionRate = ((end - newCustomers) / starting) * 100;
       });
@@ -30,17 +30,22 @@ class _RetentionState extends State<Retention> {
   }
 
   void _downloadPDF() {
-    if (_retentionRate != null) {
-      PdfService.generateSingleCalculatorPdf(
-        "Retention Rate Result",
-        {
-          "Customers at End of Period": _endCustomersController.text,
-          "New Customers Acquired": _newCustomersController.text,
-          "Customers at Start of Period": _startingCustomersController.text,
-          "Retention Rate": "${_retentionRate!.toStringAsFixed(2)}%",
-        },
+    if (_retentionRate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please calculate retention rate first.")),
       );
+      return;
     }
+
+    PdfService.generateSingleCalculatorPdf(
+      "Retention Rate Result",
+      {
+        "Customers at End of Period": _endCustomersController.text,
+        "New Customers Acquired": _newCustomersController.text,
+        "Customers at Start of Period": _startingCustomersController.text,
+        "Retention Rate": "${_retentionRate!.toStringAsFixed(2)}%",
+      },
+    );
   }
 
   @override
@@ -70,7 +75,7 @@ class _RetentionState extends State<Retention> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 8,
@@ -82,11 +87,12 @@ class _RetentionState extends State<Retention> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Determine what percentage of customers stayed with your business over a certain time period.",
+                  "Determine what percentage of customers stayed with your business over a specific time period.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
+
                 TextField(
                   controller: _endCustomersController,
                   decoration: InputDecoration(
@@ -97,6 +103,7 @@ class _RetentionState extends State<Retention> {
                   ),
                   keyboardType: TextInputType.number,
                 ),
+
                 const SizedBox(height: 16),
                 TextField(
                   controller: _newCustomersController,
@@ -108,6 +115,7 @@ class _RetentionState extends State<Retention> {
                   ),
                   keyboardType: TextInputType.number,
                 ),
+
                 const SizedBox(height: 16),
                 TextField(
                   controller: _startingCustomersController,
@@ -119,6 +127,7 @@ class _RetentionState extends State<Retention> {
                   ),
                   keyboardType: TextInputType.number,
                 ),
+
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _calculateRetentionRate,
@@ -131,6 +140,7 @@ class _RetentionState extends State<Retention> {
                   ),
                   child: const Text("Calculate Retention Rate"),
                 ),
+
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -141,15 +151,16 @@ class _RetentionState extends State<Retention> {
                   child: Center(
                     child: Text(
                       _retentionRate == null
-                          ? "Your retention rate result will appear here."
+                          ? "Your Retention Rate result will appear here."
                           : "Your Retention Rate is ${_retentionRate!.toStringAsFixed(2)}%",
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _downloadPDF,
