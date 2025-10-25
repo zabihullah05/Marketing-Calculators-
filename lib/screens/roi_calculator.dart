@@ -38,7 +38,12 @@ class _ROICalculatorState extends State<ROICalculator> {
       );
     }
   }
-
+ @override
+  void dispose() {
+    _gainController.dispose();
+    _costController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
