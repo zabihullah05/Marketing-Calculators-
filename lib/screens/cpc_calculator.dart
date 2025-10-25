@@ -140,6 +140,12 @@ class _CPCCalculatorState extends State<CPCCalculator> {
           ),
         ),
       ),
-    );
+    ); 
   }
+@override
+void dispose() {
+  _costController.dispose();
+  _clicksController.dispose();
+  super.dispose();
+}
 }
