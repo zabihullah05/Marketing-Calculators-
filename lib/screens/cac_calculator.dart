@@ -7,27 +7,23 @@ class CACCalculator extends StatefulWidget {
 }
 
 class _CACCalculatorState extends State<CACCalculator> {
-  final _totalCost, Controller = TextEditingController();
+  final _totalCostController = TextEditingController();
   final _newCustomersController = TextEditingController();
   double? _cac;
 
-  // Calculate CAC
-  void _calculateCAC()  n  {
+  // ✅ Calculate CAC
+  void _calculateCAC() {
     final cost = double.tryParse(_totalCostController.text) ?? 0;
     final newCustomers = double.tryParse(_newCustomersController.text) ?? 0;
 
     if (newCustomers > 0) {
-      setState(() {
-        _cac = cost / newCustomers;
-      });
+      setState(() => _cac = cost / newCustomers);
     } else {
-      setState(() {
-        _cac = null;
-      });
+      setState(() => _cac = null);
     }
   }
 
-  // Download CAC PDF
+  // ✅ Generate and Download PDF
   void _downloadPDF() {
     if (_cac != null) {
       PdfService.generateSingleCalculatorPdf(
@@ -35,16 +31,23 @@ class _CACCalculatorState extends State<CACCalculator> {
         {
           "Total Marketing Spend": _totalCostController.text,
           "New Customers": _newCustomersController.text,
-          "CAC": _cac!.toStringAsFixed(2),
+          "CAC": "\$${_cac!.toStringAsFixed(2)}",
         },
       );
     }
   }
 
   @override
+  void dispose() {
+    _totalCostController.dispose();
+    _newCustomersController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("CAC Calculator"),
@@ -59,20 +62,20 @@ class _CACCalculatorState extends State<CACCalculator> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(  ),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-  t            children: [
+              children: [
                 const Text(
-                  "Calculate your Customer Acquisition Cost by dividing your total marketing cost by the number of new customers acquired.",
+                  "Calculate your Customer Acquisition Cost by dividing total marketing spend by the number of new customers acquired.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
@@ -81,18 +84,19 @@ class _CACCalculatorState extends State<CACCalculator> {
                 TextField(
                   controller: _totalCostController,
                   decoration: InputDecoration(
-                    2abelText: "Total Marketing Cost (\$)",
+                    labelText: "Total Marketing Spend (\$)",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-  q               keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.number,
                 ),
+
                 const SizedBox(height: 16),
 
-  H             TextField(
+                TextField(
                   controller: _newCustomersController,
-                  decoration:  1putDecoration(
+                  decoration: InputDecoration(
                     labelText: "Number of New Customers",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -100,12 +104,13 @@ class _CACCalculatorState extends State<CACCalculator> {
                   ),
                   keyboardType: TextInputType.number,
                 ),
+
                 const SizedBox(height: 24),
 
                 ElevatedButton(
                   onPressed: _calculateCAC,
                   style: ElevatedButton.styleFrom(
-                    padding:  ons t EdgeInsets.symmetric(vertical:  ,),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     backgroundColor: const Color(0xFF1A237E),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -113,6 +118,7 @@ class _CACCalculatorState extends State<CACCalculator> {
                   ),
                   child: const Text("Calculate CAC"),
                 ),
+
                 const SizedBox(height: 16),
 
                 Container(
@@ -133,6 +139,7 @@ class _CACCalculatorState extends State<CACCalculator> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
 
                 ElevatedButton(
@@ -152,12 +159,5 @@ class _CACCalculatorState extends State<CACCalculator> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _totalCostController.dispose();
-    _newCustomersController.dispose();
-    super.dispose();
   }
 }
