@@ -146,4 +146,10 @@ class _VideoCPMCalculatorState extends State<VideoCPMCalculator> {
       ),
     );
   }
+@override
+void dispose() {
+  _costController.dispose();
+  _viewsController.dispose();
+  super.dispose();
+}
 }
