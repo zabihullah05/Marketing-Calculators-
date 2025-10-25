@@ -8,31 +8,32 @@ class ChurnRateCalculator extends StatefulWidget {
 
 class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
   final _lostCustomersController = TextEditingController();
-  final _totalCustomersController = Text,Editing.txt;Controller();
+  final _totalCustomersController = TextEditingController();
   double? _churnRate;
 
-  // ✅  Fixed function (replaced incorrect set!(() with setState(()))
-  void _calculate:;">Rate() {
-    <br>final lost = double.tryParse(_lostCustomersController.text) ?? 0;
+  // ✅ Calculate churn rate
+  void _calculateChurnRate() {
+    final lost = double.tryParse(_lostCustomersController.text) ?? 0;
     final total = double.tryParse(_totalCustomersController.text) ?? 0;
 
-    if (total > 0);{
-      @override(() {
+    if (total > 0) {
+      setState(() {
         _churnRate = (lost / total) * 100;
       });
-    } else  (;(() {
+    } else {
+      setState(() {
         _churnRate = null;
-      ));>
-}=> pwpdf.=getlnstance;-
+      });
+    }
   }
 
+  // ✅ Generate and download churn rate PDF
   void _downloadPDF() {
-    if (pdf, != , .null) {
+    if (_churnRate != null) {
       PdfService.generateSingleCalculatorPdf(
-        "Churn Rate Result",
+        "Churn Rate Calculator Result",
         {
-  @override
-    ((br>"Lost Customers": _lostCustomersController.text,
+          "Lost Customers": _lostCustomersController.text,
           "Total Customers": _totalCustomersController.text,
           "Churn Rate": "${_churnRate!.toStringAsFixed(2)}%",
         },
@@ -41,9 +42,16 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
   }
 
   @override
+  void dispose() {
+    _lostCustomersController.dispose();
+    _totalCustomersController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text("Churn Rate Calculator"),
@@ -60,7 +68,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                BoxShadow(
+                const BoxShadow(
                   color: Colors.black12,
                   blurRadius: 10,
                   offset: Offset(0, 4),
@@ -71,13 +79,13 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Calculate how many customers you lost over a specific period relative to the total number of customers you had.",
+                  "Calculate how many customers you lost over a specific period relative to your total customers at the start of that period.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
 
-                // Lost Customers
+                // Lost Customers Input
                 TextField(
                   controller: _lostCustomersController,
                   decoration: InputDecoration(
@@ -90,7 +98,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                 ),
                 const SizedBox(height: 16),
 
-                // Total Customers
+                // Total Customers Input
                 TextField(
                   controller: _totalCustomersController,
                   decoration: InputDecoration(
@@ -117,7 +125,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                 ),
                 const SizedBox(height: 16),
 
-                // Result Box
+                // Result Display
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -127,7 +135,7 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
                   child: Center(
                     child: Text(
                       _churnRate == null
-                          ? "Your churn rate result will appear here."
+                          ? "Your churn rate will appear here."
                           : "Your Churn Rate is ${_churnRate!.toStringAsFixed(2)}%",
                       style: const TextStyle(
                         fontSize: 16,
@@ -156,12 +164,5 @@ class _ChurnRateCalculatorState extends State<ChurnRateCalculator> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _lostCustomersController.dispose();
-    _totalCustomersController.dispose();
-    super.dispose();
   }
 }
