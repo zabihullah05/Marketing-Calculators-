@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
 
-class RetentionCalculator extends StatefulWidget {
+class RetentionRateCalculator extends StatefulWidget {
   @override
-  _RetentionCalculatorState createState() => _RetentionCalculatorState();
+  _RetentionRateCalculatorState createState() => _RetentionRateCalculatorState();
 }
 
-class _RetentionCalculatorState extends State<RetentionCalculator> {
+class _RetentionRateCalculatorState extends State<RetentionRateCalculator> {
   final _endCustomersController = TextEditingController();
   final _newCustomersController = TextEditingController();
   final _startingCustomersController = TextEditingController();
