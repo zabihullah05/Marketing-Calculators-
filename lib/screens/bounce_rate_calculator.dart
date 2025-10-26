@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
 
-class BounceRateCalculator, extends StatefulWidget {
-  @   @override
-  _Bounce  eRateCalculatorState createState() => _BounceRateCalcula, torState();
+class BounceRateCalculator extends StatefulWidget {
+  @override
+  _BounceRateCalculatorState createState() => _BounceRateCalculatorState();
 }
 
-class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
-  final _singlePageVisits  r     JController  N  = TextEditingController();
-  final _   2  totalEntriesController = TextEditingController();
+class _BounceRateCalculatorState extends State<BounceRateCalculator> {
+  final _singlePageVisitsController = TextEditingController();
+  final _totalEntriesController = TextEditingController();
   double? _bounceRate;
 
-  // Calculate Bounce Rate
   void _calculateBounceRate() {
     final singlePageVisits =
         double.tryParse(_singlePageVisitsController.text) ?? 0;
     final totalEntries = double.tryParse(_totalEntriesController.text) ?? 0;
 
-    if (totalEntries > 0)  Q  {
-      setState(() => _bounceRate = (singlePageVisits / totalEntries) * 100);
+    if (totalEntries > 0) {
+      setState(() {
+        _bounceRate = (singlePageVisits / totalEntries) * 100;
+      });
     } else {
-      setState(() => _bounceRate = null);
+      setState(() {
+        _bounceRate = null;
+      });
     }
   }
 
-  // Download PDF 
   void _downloadPDF() {
     if (_bounceRate != null) {
       PdfService.generateSingleCalculatorPdf(
@@ -36,6 +38,13 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
         },
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _singlePageVisitsController.dispose();
+    _totalEntriesController.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,17 +78,15 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
-                  "Calculate your Bounce Rate by entering single-page visits and total entries.",
+                  "Calculate the percentage of single-page sessions (bounces) on your website.",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 const SizedBox(height: 20),
-
-                // Single Page Visits
                 TextField(
                   controller: _singlePageVisitsController,
                   decoration: InputDecoration(
-                    labelText: "Single-Page Visits",
+                    labelText: "Single Page Visits",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -87,8 +94,6 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
-
-                // Total Entries
                 TextField(
                   controller: _totalEntriesController,
                   decoration: InputDecoration(
@@ -100,8 +105,6 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 24),
-
-                // Calculate Button
                 ElevatedButton(
                   onPressed: _calculateBounceRate,
                   style: ElevatedButton.styleFrom(
@@ -114,8 +117,6 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
                   child: const Text("Calculate Bounce Rate"),
                 ),
                 const SizedBox(height: 16),
-
-                // Result Display
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -125,7 +126,7 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
                   child: Center(
                     child: Text(
                       _bounceRate == null
-                          ? "Your Bounce Rate will appear here."
+                          ? "Your Bounce Rate result will appear here."
                           : "Your Bounce Rate is ${_bounceRate!.toStringAsFixed(2)}%",
                       style: const TextStyle(
                         fontSize: 16,
@@ -135,8 +136,6 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // PDF Button
                 ElevatedButton(
                   onPressed: _downloadPDF,
                   style: ElevatedButton.styleFrom(
@@ -154,12 +153,5 @@ class  2B  _BounceRateCalculatorState extends State<BounceRateCalculator>  {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _singlePageVisitsController.dispose();
-    _totalEntriesController.dispose();
-    super.dispose();
   }
 }
