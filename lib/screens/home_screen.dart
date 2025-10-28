@@ -78,33 +78,33 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: GestureDetector(
               onTap: () {
-                if (apiKey.isEmpty) {
-                  showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: const Text('API Key Missing'),
-                      content: const Text(
-                          'Please add your GEMINI_API_KEY in the .env file located in your project root to enable AI formulas.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('OK'),
-                        )
-                      ],
-                    ),
-                  );
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const AlertDialog(
-                      title: Text('Ask AI Formula'),
-                      content: Text(
-                        'Gemini AI is ready! You can now get personalized marketing formulas based on your inputs.',
-                      ),
-                    ),
-                  );
-                }
-              },
+  if (apiKey.isEmpty) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('API Key Missing'),
+        content: const Text(
+            'Please add your GEMINI_API_KEY in the .env file located in your project root to enable AI formulas.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
+  } else {
+    showDialog(
+      context: context,
+      builder: (_) => const AlertDialog(
+        title: Text('Ask AI Formula'),
+        content: Text(
+          'Gemini AI is ready! You can now get personalized marketing formulas based on your inputs.',
+        ),
+      ),
+    );
+  }
+},
               child: Container(
                 height: 90,
                 decoration: BoxDecoration(
