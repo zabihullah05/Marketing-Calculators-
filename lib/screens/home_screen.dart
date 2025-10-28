@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/pdf_service.dart';
 import 'screens_index.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+import 'ask_ai_formula_screen.dart';
 class HomeScreen extends StatelessWidget {
   final List<Map<String, String>> calculators = [
     {'name': 'ROI Calculator', 'route': 'ROICalculator'},
@@ -94,14 +94,9 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   } else {
-    showDialog(
-      context: context,
-      builder: (_) => const AlertDialog(
-        title: Text('Ask AI Formula'),
-        content: Text(
-          'Gemini AI is ready! You can now get personalized marketing formulas based on your inputs.',
-        ),
-      ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AskAIFormulaScreen()),
     );
   }
 },
