@@ -1,0 +1,2 @@
+rootProject.name = 'marketing_calculators'
+include ':app'
