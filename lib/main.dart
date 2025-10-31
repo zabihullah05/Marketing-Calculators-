@@ -15,7 +15,7 @@ class MarketingCalculatorsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Marketing Calculators',
+      title: 'FormulaAI',
       theme: ThemeData(
         primaryColor: Color(0xFF1A237E),
         scaffoldBackgroundColor: Colors.white,
