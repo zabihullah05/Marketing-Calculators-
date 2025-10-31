@@ -23,10 +23,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Regenerate Android folder only
-        run: |
-          rm -rf android
-          flutter create --platforms=android .
+      # 🔹 Generate launcher icons before building
+      - name: Generate App Icons
+        run: flutter pub run flutter_launcher_icons
 
       - name: Build release APK
         run: flutter build apk --release
@@ -34,5 +33,5 @@ jobs:
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: marketing_calculator_app
+          name: formula_ai_app
           path: build/app/outputs/flutter-apk/app-release.apk
