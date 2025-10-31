@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/ai_formula_service.dart';
 
 class AskAIFormulaScreen extends StatefulWidget {
   @override
@@ -20,11 +19,13 @@ class _AskAIFormulaScreenState extends State<AskAIFormulaScreen> {
       _response = null;
     });
 
-    final answer = await AIFormulaService.getFormulaHelp(question);
+    // Temporarily disable real API call
+    await Future.delayed(const Duration(seconds: 1)); // small delay for effect
 
     setState(() {
       _loading = false;
-      _response = answer;
+      _response =
+          "🤖 AI Formula Suggestions — Coming soon!\n\nWe're currently working on bringing Gemini AI formula assistance to this app. Stay tuned for updates!";
     });
   }
 
@@ -56,7 +57,8 @@ class _AskAIFormulaScreenState extends State<AskAIFormulaScreen> {
               onPressed: _askAI,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1A237E),
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -76,7 +78,10 @@ class _AskAIFormulaScreenState extends State<AskAIFormulaScreen> {
                     ),
                     child: Text(
                       _response!,
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                 ),
