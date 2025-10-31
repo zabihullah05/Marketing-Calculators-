@@ -6,7 +6,7 @@
     <application
         android:name="${applicationName}"
         android:label="FormulaAI"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="res/@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
