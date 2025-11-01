@@ -1,4 +1,4 @@
-name: Flutter Android Build
+name: Build FormulaAI App
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build APK
+    name: Build Release AAB
     runs-on: ubuntu-latest
 
     steps:
@@ -18,20 +18,27 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'   # stable modern version
+          flutter-version: '3.22.2'
 
       - name: Install dependencies
         run: flutter pub get
 
-      # 🔹 Generate launcher icons before building
-      - name: Generate App Icons
-        run: flutter pub run flutter_launcher_icons
+      # 👇 Do NOT delete android folder anymore
+      - name: Build release AAB
+        run: flutter build appbundle --release
 
+      - name: Upload AAB as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FormulaAI-appbundle
+          path: build/app/outputs/bundle/release/app-release.aab
+
+      # Optional: Also build APK for testing
       - name: Build release APK
         run: flutter build apk --release
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: formula_ai_app
+          name: FormulaAI-apk
           path: build/app/outputs/flutter-apk/app-release.apk
