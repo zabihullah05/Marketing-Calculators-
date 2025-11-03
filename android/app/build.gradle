@@ -2,10 +2,13 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
-
 android {
-    namespace "com.example.FormulaAİ"
-    compileSdk 34
+    namespace "com.example.yourapp"
+    compileSdkVersion 34
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+
 
     defaultConfig {
         applicationId "com.example.marketing_calculators"
