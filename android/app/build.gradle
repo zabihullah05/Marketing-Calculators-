@@ -4,8 +4,8 @@ plugins {
 }
 
 android {
-    namespace "com.example.marketing_calculators"
-    compileSdk 33
+    namespace "com.example.FormulaAİ"
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.marketing_calculators"
