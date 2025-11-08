@@ -18,9 +18,19 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    // ✅ Define signing configs before usage
+    signingConfigs {
+        debug {
+            storeFile file("${rootDir}/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+
     buildTypes {
         release {
-            // Use debug signing for GitHub Actions; replace later with your keystore
+            // ✅ Use debug signing for CI/CD (GitHub Actions)
             signingConfig = signingConfigs.debug
             minifyEnabled = false
             shrinkResources = false
@@ -40,16 +50,24 @@ android {
         jvmTarget = "17"
     }
 
-    // ✅ Prevents Flutter Gradle sync issues
+    // ✅ Prevent Flutter Gradle sync issues
     buildFeatures {
         buildConfig = true
     }
 
-    // ✅ Ensures correct output for GitHub Actions
+    // ✅ Ensure correct output for GitHub Actions (fix missing APK)
     packagingOptions {
         resources {
-            excludes += [ "META-INF/DEPENDENCIES", "META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/license.txt",
-                          "META-INF/NOTICE", "META-INF/NOTICE.txt", "META-INF/notice.txt", "META-INF/ASL2.0" ]
+            excludes += [
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            ]
         }
     }
 }
