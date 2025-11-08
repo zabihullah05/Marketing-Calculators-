@@ -12,52 +12,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 🧩 Checkout repository
-      - name: Checkout repository
+      - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      # ☕ Setup Java (required for Gradle 8.x)
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      # 🐦 Setup Flutter
-      - name: Setup Flutter
+      - name: 🧰 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
-          channel: stable
 
-      # 🔧 Flutter environment check
-      - name: Flutter doctor
-          # helps debug toolchain compatibility if a build fails
-        run: flutter doctor -v
-
-      # 🧹 Clean any previous build cache
-      - name: Flutter clean
-        run: flutter clean
-
-      # 📦 Install dependencies
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: flutter pub get
 
-      # 🧩 (Optional) Regenerate launcher icons
-      - name: Generate app launcher icons
+      - name: 🧹 Clean build cache
+        run: flutter clean
+
+      - name: 🧩 Generate launcher icons
         run: flutter pub run flutter_launcher_icons
-        continue-on-error: true  # prevents build fail if already generated
+        continue-on-error: true  # skip if already exists
 
-      # 🏗️ Build release APK
-      - name: Build release APK
-        run: flutter build apk --release --verbose
+      - name: 🏗️ Build release APK
+        run: flutter build apk --release
 
-      # 🏗️ Build release AAB (for Play Store)
-      - name: Build release AAB
-        run: flutter build appbundle --release --verbose
+      - name: 🏗️ Build release AAB (Play Store)
+        run: flutter build appbundle --release
 
-      # 📤 Upload release APK artifact
-      - name: Upload APK as artifact
+      - name: 📤 Upload release APK
         uses: actions/upload-artifact@v4
         with:
           name: FormulaAI-APK
@@ -65,8 +44,7 @@ jobs:
             build/app/outputs/flutter-apk/app-release.apk
             build/app/intermediates/apk/release/app-release.apk
 
-      # 📤 Upload release AAB artifact
-      - name: Upload AAB as artifact
+      - name: 📤 Upload release AAB
         uses: actions/upload-artifact@v4
         with:
           name: FormulaAI-AAB
