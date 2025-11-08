@@ -1,4 +1,4 @@
-name: Build FormulaAI App
+name: Flutter Android Build
 
 on:
   push:
@@ -8,44 +8,39 @@ on:
 
 jobs:
   build:
-    name: Build Release AAB
+    name: Build APK & AAB
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
 
-      - name: Clean Flutter build
-        run: flutter clean
-
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build release AAB
-        run: flutter build appbundle --release
-
-      - name: Upload AAB as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: FormulaAI-appbundle
-          path: build/app/outputs/bundle/release/app-release.aab
+      # 🧩 Generate launcher icons before building
+      - name: Generate app launcher icons
+        run: flutter pub run flutter_launcher_icons
 
       - name: Build release APK
         run: flutter build apk --release
 
+      - name: Build release AAB
+        run: flutter build appbundle --release
+
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FormulaAI-apk
+          name: FormulaAI-APK
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload AAB as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FormulaAI-AAB
+          path: build/app/outputs/bundle/release/app-release.aab
