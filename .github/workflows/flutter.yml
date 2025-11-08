@@ -8,74 +8,75 @@ on:
 
 jobs:
   build:
-    name: Build APK & AAB (Auto Version)
+    name: Build Flutter APK & AAB
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧾 Checkout repository
+      # ✅ 1. Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🧰 Setup Flutter
+      # ✅ 2. Setup Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
 
-      - name: 📦 Install dependencies
+      # ✅ 3. Setup Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # ✅ 4. Ensure AndroidX and Gradle properties
+      - name: Ensure AndroidX migration flags
+        run: |
+          echo "android.useAndroidX=true" >> android/gradle.properties
+          echo "android.enableJetifier=true" >> android/gradle.properties
+          echo "org.gradle.jvmargs=-Xmx4096M -XX:+UseParallelGC" >> android/gradle.properties
+          echo "org.gradle.caching=true" >> android/gradle.properties
+          echo "android.suppressUnsupportedCompileSdk=34" >> android/gradle.properties
+
+      # ✅ 5. Install dependencies
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: 🧹 Clean build cache
+      # ✅ 6. Optional — upgrade dependencies to latest compatible versions
+      - name: Upgrade dependencies
+        run: flutter pub upgrade --major-versions
+
+      # ✅ 7. Clean build cache
+      - name: Flutter clean
         run: flutter clean
 
-      - name: ⚙️ Auto-increment version
-        id: version
-        run: |
-          # Get current version from pubspec.yaml
-          VERSION_LINE=$(grep 'version:' pubspec.yaml)
-          CURRENT_VERSION=$(echo "$VERSION_LINE" | awk '{print $2}')
-          VERSION_NAME=$(echo "$CURRENT_VERSION" | cut -d+ -f1)
-          VERSION_CODE=$(echo "$CURRENT_VERSION" | cut -d+ -f2)
-          if [ -z "$VERSION_CODE" ]; then
-            VERSION_CODE=1
-          fi
-          NEW_VERSION_CODE=$((VERSION_CODE + 1))
-          NEW_VERSION="$VERSION_NAME+$NEW_VERSION_CODE"
-          
-          # Update pubspec.yaml
-          sed -i "s/version: .*/version: $NEW_VERSION/" pubspec.yaml
-          
-          echo "🔢 Bumped version: $NEW_VERSION"
-          echo "version_code=$NEW_VERSION_CODE" >> $GITHUB_ENV
-          echo "version_name=$VERSION_NAME" >> $GITHUB_ENV
+      # ✅ 8. Verify Flutter environment
+      - name: Flutter doctor
+        run: flutter doctor -v
 
-      - name: 🧩 Generate launcher icons
+      # ✅ 9. Generate launcher icons (optional)
+      - name: Generate app launcher icons
         run: flutter pub run flutter_launcher_icons
-        continue-on-error: true  # skip if already exists
+        continue-on-error: true
 
-      - name: 🏗️ Build release APK
-        run: flutter build apk --release
+      # ✅ 10. Build release APK
+      - name: Build release APK
+        run: flutter build apk --release --verbose
 
-      - name: 🏗️ Build release AAB (Play Store)
-        run: flutter build appbundle --release
+      # ✅ 11. Build release AAB
+      - name: Build release AAB
+        run: flutter build appbundle --release --verbose
 
-      - name: 📤 Upload release APK
+      # ✅ 12. Upload APK as artifact
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FormulaAI-APK-${{ env.version_name }}+${{ env.version_code }}
-          path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/intermediates/apk/release/app-release.apk
+          name: MarketingCalculators-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: 📤 Upload release AAB
+      # ✅ 13. Upload AAB as artifact
+      - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FormulaAI-AAB-${{ env.version_name }}+${{ env.version_code }}
+          name: MarketingCalculators-AAB
           path: build/app/outputs/bundle/release/app-release.aab
-
-      - name: 🪄 Commit new version bump
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config --global user.email "github-actions@users.noreply.github.com"
-          git config --global user.name "GitHub Actions"
-          git add pubspec.yaml
-          git commit -m "🔼 Auto bump version to ${{ env.version_name }}+${{ env.version_code }}"
-          git push
