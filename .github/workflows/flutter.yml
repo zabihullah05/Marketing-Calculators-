@@ -61,7 +61,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FormulaAI-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/intermediates/apk/release/app-release.apk
 
       # 📤 Upload release AAB artifact
       - name: Upload AAB as artifact
