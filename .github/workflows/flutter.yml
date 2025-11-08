@@ -23,22 +23,31 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # 🧩 Generate launcher icons before building
+      # 🧹 Clean any previous build cache
+      - name: Flutter clean
+        run: flutter clean
+
+      # 🧩 (Optional) Regenerate launcher icons if you’ve configured flutter_launcher_icons
       - name: Generate app launcher icons
         run: flutter pub run flutter_launcher_icons
+        continue-on-error: true  # prevents build fail if already generated
 
+      # 🏗️ Build release APK
       - name: Build release APK
         run: flutter build apk --release
 
+      # 🏗️ Build release AAB (for Play Store)
       - name: Build release AAB
         run: flutter build appbundle --release
 
+      # 📦 Upload release APK
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
           name: FormulaAI-APK
           path: build/app/outputs/flutter-apk/app-release.apk
 
+      # 📦 Upload release AAB
       - name: Upload AAB as artifact
         uses: actions/upload-artifact@v4
         with:
