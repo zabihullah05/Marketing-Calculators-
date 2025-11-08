@@ -12,42 +12,58 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 🧩 Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ☕ Setup Java (required for Gradle 8.x)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 🐦 Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
+          channel: stable
 
-      - name: Install dependencies
-        run: flutter pub get
+      # 🔧 Flutter environment check
+      - name: Flutter doctor
+          # helps debug toolchain compatibility if a build fails
+        run: flutter doctor -v
 
       # 🧹 Clean any previous build cache
       - name: Flutter clean
         run: flutter clean
 
-      # 🧩 (Optional) Regenerate launcher icons if you’ve configured flutter_launcher_icons
+      # 📦 Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 🧩 (Optional) Regenerate launcher icons
       - name: Generate app launcher icons
         run: flutter pub run flutter_launcher_icons
         continue-on-error: true  # prevents build fail if already generated
 
       # 🏗️ Build release APK
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --verbose
 
       # 🏗️ Build release AAB (for Play Store)
       - name: Build release AAB
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --verbose
 
-      # 📦 Upload release APK
+      # 📤 Upload release APK artifact
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
           name: FormulaAI-APK
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      # 📦 Upload release AAB
+      # 📤 Upload release AAB artifact
       - name: Upload AAB as artifact
         uses: actions/upload-artifact@v4
         with:
