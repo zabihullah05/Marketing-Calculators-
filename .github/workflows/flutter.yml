@@ -21,15 +21,24 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
+          channel: 'stable'
 
-      # ✅ 3. Setup Java
+      # ✅ 3. Setup Java 17 (required for Gradle 8+)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # ✅ 4. Ensure AndroidX and Gradle properties
+      # ✅ 4. Ensure Gradle wrapper exists
+      - name: Ensure Gradle wrapper file
+        run: |
+          if [ ! -f android/gradle/wrapper/gradle-wrapper.properties ]; then
+            mkdir -p android/gradle/wrapper
+            echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-all.zip" > android/gradle/wrapper/gradle-wrapper.properties
+          fi
+
+      # ✅ 5. Ensure AndroidX and Gradle properties
       - name: Ensure AndroidX migration flags
         run: |
           echo "android.useAndroidX=true" >> android/gradle.properties
@@ -38,15 +47,11 @@ jobs:
           echo "org.gradle.caching=true" >> android/gradle.properties
           echo "android.suppressUnsupportedCompileSdk=34" >> android/gradle.properties
 
-      # ✅ 5. Install dependencies
+      # ✅ 6. Install dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      # ✅ 6. Optional — upgrade dependencies to latest compatible versions
-      - name: Upgrade dependencies
-        run: flutter pub upgrade --major-versions
-
-      # ✅ 7. Clean build cache
+      # ✅ 7. Clean previous builds
       - name: Flutter clean
         run: flutter clean
 
@@ -64,17 +69,18 @@ jobs:
         run: flutter build apk --release --verbose
 
       # ✅ 11. Build release AAB
+        # (skip if your project doesn't need Play Store bundle)
       - name: Build release AAB
         run: flutter build appbundle --release --verbose
 
-      # ✅ 12. Upload APK as artifact
+      # ✅ 12. Upload APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: MarketingCalculators-APK
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      # ✅ 13. Upload AAB as artifact
+      # ✅ 13. Upload AAB artifact
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
