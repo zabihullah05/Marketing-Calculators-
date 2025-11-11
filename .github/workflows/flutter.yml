@@ -30,16 +30,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ✅ 4. Ensure Gradle wrapper exists (Gradle 8.7)
-      - name: Ensure Gradle wrapper file
+      # ✅ 4. Verify Gradle wrapper (Gradle 8.9 for AGP 8.5)
+      - name: Ensure Gradle wrapper
         run: |
-          if [ ! -f android/gradle/wrapper/gradle-wrapper.properties ]; then
-            mkdir -p android/gradle/wrapper
-            echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-all.zip" > android/gradle/wrapper/gradle-wrapper.properties
-          fi
+          mkdir -p android/gradle/wrapper
+          echo "distributionBase=GRADLE_USER_HOME" > android/gradle/wrapper/gradle-wrapper.properties
+          echo "distributionPath=wrapper/dists" >> android/gradle/wrapper/gradle-wrapper.properties
+          echo "zipStoreBase=GRADLE_USER_HOME" >> android/gradle/wrapper/gradle-wrapper.properties
+          echo "zipStorePath=wrapper/dists" >> android/gradle/wrapper/gradle-wrapper.properties
+          echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.9-bin.zip" >> android/gradle/wrapper/gradle-wrapper.properties
 
       # ✅ 5. Ensure AndroidX + Gradle properties
-      - name: Ensure AndroidX migration flags
+      - name: Ensure Gradle properties
         run: |
           echo "android.useAndroidX=true" >> android/gradle.properties
           echo "android.enableJetifier=true" >> android/gradle.properties
@@ -47,19 +49,19 @@ jobs:
           echo "org.gradle.caching=true" >> android/gradle.properties
           echo "android.suppressUnsupportedCompileSdk=34" >> android/gradle.properties
 
-      # ✅ 6. Install dependencies
+      # ✅ 6. Install Flutter dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      # ✅ 7. Clean previous builds
+      # ✅ 7. Clean old builds
       - name: Flutter clean
         run: flutter clean
 
-      # ✅ 8. Verify Flutter environment
+      # ✅ 8. Doctor check
       - name: Flutter doctor
         run: flutter doctor -v
 
-      # ✅ 9. Generate launcher icons (optional)
+      # ✅ 9. Optional — Generate app icons
       - name: Generate app launcher icons
         run: flutter pub run flutter_launcher_icons
         continue-on-error: true
@@ -72,14 +74,13 @@ jobs:
       - name: Build release AAB
         run: flutter build appbundle --release --verbose
 
-      # ✅ 12. List build outputs (debug helper)
-      - name: List build outputs (debug)
+      # ✅ 12. Debug: list all output files
+      - name: List build outputs
         run: |
-          echo "📦 Listing all APK and AAB files..."
-          find build/app -type f -name "*.apk" || true
-          find build/app -type f -name "*.aab" || true
+          echo "📦 Listing build outputs..."
+          find build/app -type f \( -name "*.apk" -o -name "*.aab" \) || true
 
-      # ✅ 13. Upload APK artifact (handles all AGP paths)
+      # ✅ 13. Upload APK artifact (supports AGP 8+ folder structure)
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
@@ -90,7 +91,7 @@ jobs:
             **/outputs/flutter-apk/*.apk
             **/outputs/apk/release/*.apk
 
-      # ✅ 14. Upload AAB artifact (handles all AGP paths)
+      # ✅ 14. Upload AAB artifact (supports AGP 8+ folder structure)
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
