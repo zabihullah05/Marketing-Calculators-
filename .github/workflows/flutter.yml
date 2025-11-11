@@ -30,7 +30,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ✅ 4. Ensure Gradle wrapper exists
+      # ✅ 4. Ensure Gradle wrapper exists (Gradle 8.7)
       - name: Ensure Gradle wrapper file
         run: |
           if [ ! -f android/gradle/wrapper/gradle-wrapper.properties ]; then
@@ -38,7 +38,7 @@ jobs:
             echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.7-all.zip" > android/gradle/wrapper/gradle-wrapper.properties
           fi
 
-      # ✅ 5. Ensure AndroidX and Gradle properties
+      # ✅ 5. Ensure AndroidX + Gradle properties
       - name: Ensure AndroidX migration flags
         run: |
           echo "android.useAndroidX=true" >> android/gradle.properties
@@ -69,20 +69,32 @@ jobs:
         run: flutter build apk --release --verbose
 
       # ✅ 11. Build release AAB
-        # (skip if your project doesn't need Play Store bundle)
       - name: Build release AAB
         run: flutter build appbundle --release --verbose
 
-      # ✅ 12. Upload APK artifact
+      # ✅ 12. List build outputs (debug helper)
+      - name: List build outputs (debug)
+        run: |
+          echo "📦 Listing all APK and AAB files..."
+          find build/app -type f -name "*.apk" || true
+          find build/app -type f -name "*.aab" || true
+
+      # ✅ 13. Upload APK artifact (handles all AGP paths)
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: MarketingCalculators-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/apk/release/*.apk
+            **/outputs/flutter-apk/*.apk
+            **/outputs/apk/release/*.apk
 
-      # ✅ 13. Upload AAB artifact
+      # ✅ 14. Upload AAB artifact (handles all AGP paths)
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
           name: MarketingCalculators-AAB
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: |
+            build/app/outputs/bundle/release/*.aab
+            **/outputs/bundle/release/*.aab
